@@ -1,9 +1,13 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast'; // ✅ Toast Import করা হলো
+import { Toaster } from 'react-hot-toast';
 
 // Layout Infrastructure
 import MainLayout from './layouts/MainLayout';
+
+// 🛡️ Route Protection Components
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import PublicRoute from './components/auth/PublicRoute';
 
 // Import All Modular Pages
 import Login from './pages/auth/Login';
@@ -21,7 +25,6 @@ import StudyLunchSystem from './pages/studyLunch/StudyLunchSystem';
 function App() {
   return (
     <>
-      {/* 🔔 Global Toast Container (যেকোনো পেজ থেকে মেসেজ দেখাবে) */}
       <Toaster 
         position="top-right" 
         toastOptions={{
@@ -34,12 +37,13 @@ function App() {
       />
 
       <Routes>
-        {/* Completely Isolated Public Authentication Pages */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* Completely Isolated Public Authentication Pages (Protected by PublicRoute) */}
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
 
-        {/* Main App Layout Shield Wrapped Routes */}
-        <Route element={<MainLayout />}>
+        {/* Main App Layout Shield Wrapped Routes (Protected by ProtectedRoute) */}
+        {/* We wrap the MainLayout, so ALL nested routes automatically become protected! */}
+        <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />

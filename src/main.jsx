@@ -3,13 +3,14 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 
-// Import CSS
-import './styles/reset.css';
-import './styles/tokens.css';
+// 🎨 Corrected CSS Imports (Based on your actual folder structure)
+import './styles/variables.css';
+import './styles/globals.css';
 import './styles/typography.css';
 import './styles/layout.css';
 import './styles/components.css';
-import './styles/utilities.css';
+import './styles/animations.css';
+import './styles/index.css';
 
 // Import AuthProvider
 import { AuthProvider } from './contexts/AuthContext';
