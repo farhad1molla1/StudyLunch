@@ -1,0 +1,54 @@
+:root {
+  --sl-primary: #4F46E5;
+  --sl-secondary: #8B5CF6;
+  --sl-bg: #F8FAFC;
+  --sl-card: #FFFFFF;
+  --sl-accent: #FFD166;
+  --sl-success: #22C55E;
+  --sl-error: #EF476F;
+  --sl-text: #1E293B;
+  --sl-text-muted: #64748B;
+  --sl-radius-sm: 8px;
+  --sl-radius-md: 16px;
+  --sl-radius-lg: 24px;
+  --sl-shadow: 0 8px 24px rgba(79, 70, 229, 0.04);
+  --sl-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Body Update for Theme Color Match */
+body {
+  background-color: var(--sl-bg);
+  color: var(--sl-text);
+}
+
+/* Layout Utilities */
+.desktop-only {
+  display: flex;
+}
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only {
+    display: flex !important;
+  }
+}
+
+/* Anime Style Custom Scrollbar */
+.scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-container::-webkit-scrollbar-thumb {
+  background: #E2E8F0;
+  border-radius: 10px;
+}
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: var(--sl-secondary);
+}

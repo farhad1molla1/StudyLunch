@@ -1,0 +1,6 @@
+/* src/styles/index.css */
+@import './variables.css';
+@import './globals.css';
+@import './typography.css';
+@import './components.css';
+@import './animations.css';
