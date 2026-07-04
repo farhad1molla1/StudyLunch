@@ -1,22 +1,33 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import Loader from '../common/Loader/Loader'; // ✅ Using existing Loader
 
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+const ProtectedRoute = ({ children, requireProfile = true }) => {
+  const { user, loading, isProfileComplete } = useAuth();
 
   if (loading) {
-    // Show full-page loader while checking auth state
-    return <Loader variant="page" />;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '18px' }}>Loading...</p>
+      </div>
+    );
   }
 
+  // If user is not logged in, redirect to login
   if (!user) {
-    // If not logged in, redirect to login page
     return <Navigate to="/login" replace />;
   }
 
-  // If logged in, render the protected component
+  // If the route requires a completed profile but the user hasn't completed it
+  if (requireProfile && !isProfileComplete) {
+    return <Navigate to="/profile/setup" replace />;
+  }
+
+  // If the route is specifically for setup, but profile is already complete
+  if (!requireProfile && isProfileComplete) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return children;
 };
 

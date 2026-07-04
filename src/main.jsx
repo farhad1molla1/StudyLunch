@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 
-// 🎨 Corrected CSS Imports (Based on your actual folder structure)
+// তোমার ফোল্ডারে থাকা সঠিক CSS ফাইলগুলো ইম্পোর্ট করা হলো
+import './index.css';
 import './styles/variables.css';
 import './styles/globals.css';
 import './styles/typography.css';
@@ -12,16 +12,8 @@ import './styles/components.css';
 import './styles/animations.css';
 import './styles/index.css';
 
-// Import AuthProvider
-import { AuthProvider } from './contexts/AuthContext';
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
-      {/* 🛡️ Wrap App with AuthProvider */}
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+    <App />
+  </React.StrictMode>,
 );

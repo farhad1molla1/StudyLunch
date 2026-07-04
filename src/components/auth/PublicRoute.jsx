@@ -1,22 +1,27 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import Loader from '../common/Loader/Loader'; // ✅ Using existing Loader
 
 const PublicRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, isProfileComplete, loading } = useAuth();
 
   if (loading) {
-    // Show full-page loader while checking auth state
-    return <Loader variant="page" />;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '18px' }}>Loading...</p>
+      </div>
+    );
   }
 
+  // If already logged in, redirect based on profile completion status
   if (user) {
-    // If already logged in, redirect to dashboard
-    return <Navigate to="/dashboard" replace />;
+    return isProfileComplete ? (
+      <Navigate to="/dashboard" replace />
+    ) : (
+      <Navigate to="/profile/setup" replace />
+    );
   }
 
-  // If not logged in, render the public component (Login/Signup)
   return children;
 };
 

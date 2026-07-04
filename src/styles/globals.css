@@ -1,28 +1,46 @@
-/* src/styles/globals.css */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
+/* styles/globals.css */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html {
+  font-size: 16px; /* Base size for rem calculations */
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--color-background);
+  font-family: var(--font-primary);
+  background-color: var(--color-bg);
   color: var(--color-text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* 🛠️ Global Utility Classes */
-.flex { display: flex; }
-.grid { display: grid; }
-.center { display: flex; justify-content: center; align-items: center; }
-.space-between { justify-content: space-between; }
-.text-center { text-align: center; }
-.mt-16 { margin-top: var(--space-16); }
-.mb-16 { margin-bottom: var(--space-16); }
-.hidden { display: none !important; }
-.rounded { border-radius: var(--radius-md); }
-.shadow { box-shadow: var(--shadow-md); }
+/* Image Reset */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Link Reset */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary);
+}
+
+/* Button & Input Reset */
+button, input, select, textarea {
+  font: inherit;
+  border: none;
+  outline: none;
+}

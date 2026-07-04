@@ -1,42 +1,74 @@
-/* src/styles/variables.css */
+/* styles/variables.css */
 :root {
-  /* 🎨 Color Palette */
-  --color-primary: #4F46E5;
-  --color-secondary: #8B5CF6;
-  --color-accent: #FFD166;
-  --color-success: #22C55E;
-  --color-warning: #F59E0B;
-  --color-error: #EF4444;
-  --color-background: #F8FAFC;
-  --color-surface: #FFFFFF;
-  --color-border: #E5E7EB;
-  --color-text-primary: #1F2937;
-  --color-text-secondary: #6B7280;
+  /* =========================================
+     1. Color Palette (Theme Colors)
+     ========================================= */
+  --color-primary: #6366F1;     /* Vibrant Indigo */
+  --color-secondary: #8B5CF6;   /* Soft Purple */
+  --color-accent: #F59E0B;      /* Warm Amber */
+  --color-success: #22C55E;     /* Fresh Green */
+  --color-danger: #EF4444;      /* Alert Red */
+  
+  --color-bg: #F8FAFC;          /* Light Slate Background */
+  --color-surface: #FFFFFF;     /* Pure White Surface */
+  
+  --color-text-primary: #1E293B;   /* Dark Slate */
+  --color-text-secondary: #64748B; /* Medium Slate */
 
-  /* 📏 Spacing System */
-  --space-4: 4px;
-  --space-8: 8px;
-  --space-12: 12px;
-  --space-16: 16px;
-  --space-20: 20px;
-  --space-24: 24px;
-  --space-32: 32px;
-  --space-48: 48px;
-  --space-64: 64px;
+  /* =========================================
+     2. Spacing Scale (8pt grid system)
+     ========================================= */
+  --space-2: 0.125rem;  /* 2px */
+  --space-4: 0.25rem;   /* 4px */
+  --space-8: 0.5rem;    /* 8px */
+  --space-12: 0.75rem;  /* 12px */
+  --space-16: 1rem;     /* 16px */
+  --space-24: 1.5rem;   /* 24px */
+  --space-32: 2rem;     /* 32px */
+  --space-48: 3rem;     /* 48px */
+  --space-64: 4rem;     /* 64px */
 
-  /* 🟡 Border Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-round: 999px;
+  /* =========================================
+     3. Border Radius (Anime/Cute Vibe)
+     ========================================= */
+  --radius-md: 12px;    /* For smaller cards/inputs */
+  --radius-lg: 16px;    /* For main content blocks */
+  --radius-xl: 24px;    /* For modals/large containers */
+  --radius-full: 9999px; /* For pills, avatars, cute buttons */
 
-  /* ☁️ Shadow System */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-floating: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  /* =========================================
+     4. Shadows (Soft Only)
+     ========================================= */
+  --shadow-sm: 0 2px 8px rgba(99, 102, 241, 0.08);
+  --shadow-md: 0 8px 24px rgba(100, 116, 139, 0.08);
+  --shadow-lg: 0 16px 32px rgba(100, 116, 139, 0.12);
+  --shadow-hover: 0 12px 28px rgba(99, 102, 241, 0.15); /* Primary color tinted shadow for hover states */
 
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-normal: 300ms ease;
+  /* =========================================
+     5. Transition Variables
+     ========================================= */
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-bounce: 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Anime bouncy effect */
+
+  /* =========================================
+     6. Z-index Tokens
+     ========================================= */
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
 }
+
+/* =========================================
+   7. Breakpoints (Reference for media queries)
+   ========================================= */
+/* Note: Native CSS variables can't be used directly in @media definitions. 
+   Use these values when writing media queries:
+   Mobile: 320px - 480px
+   Tablet: 768px
+   Desktop: 1024px
+   Large Desktop: 1280px+ 
+*/

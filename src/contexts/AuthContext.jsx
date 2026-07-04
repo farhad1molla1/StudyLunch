@@ -1,79 +1,77 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
+import { getUser, updateLastActive } from '../services/userService';
 import { 
-  signup as serviceSignup, 
-  login as serviceLogin, 
-  googleLogin as serviceGoogleLogin, 
-  logout as serviceLogout, 
-  resetPassword as serviceResetPassword, 
-  updateUserProfile as serviceUpdateUserProfile 
+  login as authLogin, 
+  signup as authSignup, 
+  googleLogin as authGoogleLogin, 
+  resetPassword as authResetPassword 
 } from '../services/authService';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [dbUser, setDbUser] = useState(null);
+  const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Listen to Firebase Auth state changes
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        try {
+          const profileRes = await getUser(firebaseUser.uid);
+          
+          if (profileRes && profileRes.success && profileRes.data) {
+            setDbUser(profileRes.data);
+            setIsProfileComplete(!!profileRes.data.university);
+            
+            // Update last active on session restore/login
+            await updateLastActive(firebaseUser.uid);
+          } else {
+            setDbUser(null);
+            setIsProfileComplete(false);
+          }
+        } catch (error) {
+          console.error("Failed to synchronize session.");
+        }
+      } else {
+        setUser(null);
+        setDbUser(null);
+        setIsProfileComplete(false);
+      }
       setLoading(false);
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
-  const signup = async (name, email, password) => {
-    const result = await serviceSignup(name, email, password);
-    if (!result.success) throw new Error(result.message);
-    return result;
-  };
-
-  const login = async (email, password) => {
-    const result = await serviceLogin(email, password);
-    if (!result.success) throw new Error(result.message);
-    return result;
-  };
-
-  const googleLogin = async () => {
-    const result = await serviceGoogleLogin();
-    if (!result.success) throw new Error(result.message);
-    return result;
-  };
-
   const logout = async () => {
-    const result = await serviceLogout();
-    if (!result.success) throw new Error(result.message);
-    return result;
-  };
-
-  const resetPassword = async (email) => {
-    const result = await serviceResetPassword(email);
-    if (!result.success) throw new Error(result.message);
-    return result;
-  };
-
-  const updateUserProfile = async (displayName, photoURL) => {
-    const result = await serviceUpdateUserProfile(displayName, photoURL);
-    if (!result.success) throw new Error(result.message);
-    // Force user state update so UI reflects changes immediately
-    setUser({ ...auth.currentUser });
-    return result;
+    setLoading(true);
+    try {
+      await firebaseSignOut(auth);
+      setUser(null);
+      setDbUser(null);
+      setIsProfileComplete(false);
+    } catch (error) {
+      console.error("Logout failed.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const value = {
     user,
+    dbUser,
+    isProfileComplete,
     loading,
-    signup,
-    login,
-    googleLogin,
-    logout,
-    resetPassword,
-    updateUserProfile
+    login: authLogin,
+    signup: authSignup,
+    googleLogin: authGoogleLogin,
+    resetPassword: authResetPassword,
+    logout
   };
 
   return (

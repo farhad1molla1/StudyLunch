@@ -1,0 +1,178 @@
+/* =========================================
+   Base Button Styles (Anime/Modern Vibe)
+   ========================================= */
+.sl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-medium);
+  border: 2px solid transparent; /* Outline ভেরিয়েন্টের জন্য আগে থেকেই বর্ডার স্পেস রাখা */
+  border-radius: var(--radius-md); /* কিউট ও রাউন্ডেড লুক */
+  cursor: pointer;
+  transition: all var(--transition-bounce); /* বাউন্সি অ্যানিমেশন */
+  text-decoration: none;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover & Active Effects (Floating Anime Feel) */
+.sl-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+
+.sl-btn:not(:disabled):active {
+  transform: translateY(1px) scale(0.97); /* ক্লিক করলে কিউট সিংক (sink) ইফেক্ট */
+}
+
+/* =========================================
+   Sizes
+   ========================================= */
+.sl-btn--small {
+  padding: var(--space-4) var(--space-12);
+  font-size: var(--text-xs);
+  min-height: 32px;
+}
+
+.sl-btn--medium {
+  padding: var(--space-8) var(--space-16);
+  font-size: var(--text-sm);
+  min-height: 40px;
+}
+
+.sl-btn--large {
+  padding: var(--space-12) var(--space-24);
+  font-size: var(--text-base);
+  min-height: 48px;
+}
+
+/* =========================================
+   Variants
+   ========================================= */
+/* 1. Primary */
+.sl-btn--primary {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+.sl-btn--primary:hover:not(:disabled) {
+  background-color: var(--color-secondary);
+  box-shadow: var(--shadow-hover);
+}
+
+/* 2. Secondary */
+.sl-btn--secondary {
+  background-color: var(--color-text-primary);
+  color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+.sl-btn--secondary:hover:not(:disabled) {
+  background-color: var(--color-text-secondary);
+  box-shadow: var(--shadow-hover);
+}
+
+/* 3. Outline */
+.sl-btn--outline {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.sl-btn--outline:hover:not(:disabled) {
+  background-color: rgba(99, 102, 241, 0.08); /* Primary color with low opacity */
+}
+
+/* 4. Ghost (No background, no border) */
+.sl-btn--ghost {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+}
+.sl-btn--ghost:hover:not(:disabled) {
+  background-color: rgba(100, 116, 139, 0.1);
+  color: var(--color-text-primary);
+}
+
+/* 5. Danger */
+.sl-btn--danger {
+  background-color: var(--color-danger);
+  color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+.sl-btn--danger:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.2);
+}
+
+/* 6. Success */
+.sl-btn--success {
+  background-color: var(--color-success);
+  color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+.sl-btn--success:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.2);
+}
+
+/* =========================================
+   Modifiers & States
+   ========================================= */
+.sl-btn--full-width {
+  width: 100%;
+  display: flex;
+}
+
+.sl-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* =========================================
+   Icons
+   ========================================= */
+.sl-btn__icon {
+  display: flex;
+  align-items: center;
+}
+.sl-btn__icon--left {
+  margin-right: var(--space-8);
+}
+.sl-btn__icon--right {
+  margin-left: var(--space-8);
+}
+
+/* =========================================
+   Loading State & Spinner
+   ========================================= */
+.sl-btn--loading {
+  cursor: wait;
+}
+.sl-btn--loading .sl-btn__text {
+  opacity: 0.8; /* টেক্সট হালকা হয়ে যাবে */
+  margin-left: var(--space-8);
+}
+
+.sl-btn__spinner {
+  animation: sl-spin 1s linear infinite;
+  height: 1.25em;
+  width: 1.25em;
+}
+
+.sl-btn__spinner-track {
+  opacity: 0.25;
+}
+
+.sl-btn__spinner-head {
+  opacity: 0.75;
+}
+
+@keyframes sl-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
