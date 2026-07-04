@@ -1,4 +1,4 @@
-import { db } from '../config/firebase'; // Ensure your firebase config path is correct
+import { db } from '../config/firebase'; 
 import { 
   collection, 
   doc, 
@@ -8,31 +8,22 @@ import {
   updateDoc, 
   query, 
   orderBy, 
+  where,
   serverTimestamp 
 } from 'firebase/firestore';
 
-// Allowed statuses enum for strict validation
 const ALLOWED_STATUSES = ['open', 'matched', 'in_session', 'completed'];
 
-/**
- * 1. Create a new topic
- */
 export const createTopic = async (data) => {
   try {
-    // Validation Rules
-    if (!data.title || data.title.trim() === '') {
-      throw new Error('Topic title cannot be empty.');
-    }
-    if (!data.createdBy) {
-      throw new Error('Creator ID (createdBy) must be provided.');
-    }
+    if (!data.title || data.title.trim() === '') throw new Error('Topic title cannot be empty.');
+    if (!data.createdBy) throw new Error('Creator ID must be provided.');
 
     const topicsRef = collection(db, 'topics');
-    
-    // Enforcing System Rules
     const newTopic = {
       ...data,
       status: 'open',
+      acceptedBy: null, // Explicitly set to null initially
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
@@ -40,14 +31,10 @@ export const createTopic = async (data) => {
     const docRef = await addDoc(topicsRef, newTopic);
     return { id: docRef.id, ...newTopic };
   } catch (error) {
-    console.error('Error creating topic:', error);
     throw new Error(`Failed to create topic: ${error.message}`);
   }
 };
 
-/**
- * 2. Fetch all topics (Sorted by newest first)
- */
 export const getAllTopics = async () => {
   try {
     const topicsRef = collection(db, 'topics');
@@ -58,37 +45,29 @@ export const getAllTopics = async () => {
     querySnapshot.forEach((doc) => {
       topics.push({ id: doc.id, ...doc.data() });
     });
-    
     return topics;
   } catch (error) {
-    console.error('Error fetching all topics:', error);
     throw new Error(`Failed to fetch topics: ${error.message}`);
   }
 };
 
-/**
- * 3. Fetch a single topic by ID
- */
 export const getTopicById = async (topicId) => {
   try {
     if (!topicId) throw new Error('Topic ID is required.');
-
     const docRef = doc(db, 'topics', topicId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
       return { id: docSnap.id, ...docSnap.data() };
-    } else {
-      return null; // Return null if not found, as per requirement
     }
+    return null;
   } catch (error) {
-    console.error(`Error fetching topic ${topicId}:`, error);
     throw new Error(`Failed to fetch topic: ${error.message}`);
   }
 };
 
 /**
- * 4. Accept a topic (Mentor matching logic)
+ * 🤝 MENTOR ACCEPTANCE LOGIC (CORE BUSINESS RULES)
  */
 export const acceptTopic = async (topicId, mentorId) => {
   try {
@@ -96,19 +75,44 @@ export const acceptTopic = async (topicId, mentorId) => {
       throw new Error('Topic ID and Mentor ID are required.');
     }
 
+    // RULE 3: Check if the mentor already has an active session
+    const topicsRef = collection(db, 'topics');
+    const q = query(topicsRef, where('acceptedBy', '==', mentorId));
+    const mentorTopicsSnap = await getDocs(q);
+
+    let hasActiveSession = false;
+    mentorTopicsSnap.forEach((docSnap) => {
+      const status = docSnap.data().status;
+      if (status === 'matched' || status === 'in_session') {
+        hasActiveSession = true;
+      }
+    });
+
+    if (hasActiveSession) {
+      throw new Error('You already have an active session. Please complete or cancel it before accepting a new one.');
+    }
+
+    // Fetch the target topic
     const docRef = doc(db, 'topics', topicId);
-    
-    // Fetch first to get creatorId and ensure it's still "open"
     const docSnap = await getDoc(docRef);
+
     if (!docSnap.exists()) {
-      throw new Error('Topic not found.');
+      throw new Error('This topic does not exist or has been deleted.');
     }
 
     const topicData = docSnap.data();
-    if (topicData.status !== 'open') {
-      throw new Error('This topic is no longer available for acceptance.');
+
+    // RULE 1: Learner cannot mentor their own topic
+    if (topicData.createdBy === mentorId) {
+      throw new Error('You cannot mentor your own topic.');
     }
 
+    // RULE 2: Topic must be open and have no existing mentor
+    if (topicData.status !== 'open' || topicData.acceptedBy !== null) {
+      throw new Error('This topic is no longer open for acceptance.');
+    }
+
+    // UPDATE: If all validations pass, assign the mentor
     const updateData = {
       status: 'matched',
       acceptedBy: mentorId,
@@ -117,23 +121,20 @@ export const acceptTopic = async (topicId, mentorId) => {
     };
 
     await updateDoc(docRef, updateData);
-    return { id: topicId, ...topicData, ...updateData };
+    return { success: true, message: 'Successfully matched!' };
+
   } catch (error) {
     console.error(`Error accepting topic ${topicId}:`, error);
-    throw new Error(`Failed to accept topic: ${error.message}`);
+    // Return friendly message, avoiding raw Firebase internal error codes
+    throw new Error(error.message || 'Failed to accept topic. Please try again.');
   }
 };
 
-/**
- * 5. Update topic status dynamically
- */
 export const updateTopicStatus = async (topicId, status) => {
   try {
     if (!topicId) throw new Error('Topic ID is required.');
-    
-    // Validate Enum
     if (!ALLOWED_STATUSES.includes(status)) {
-      throw new Error(`Invalid status. Allowed values: ${ALLOWED_STATUSES.join(', ')}`);
+      throw new Error(`Invalid status.`);
     }
 
     const docRef = doc(db, 'topics', topicId);
@@ -141,24 +142,19 @@ export const updateTopicStatus = async (topicId, status) => {
       status: status,
       updatedAt: serverTimestamp(),
     });
-
     return true;
   } catch (error) {
-    console.error(`Error updating status for topic ${topicId}:`, error);
     throw new Error(`Failed to update topic status: ${error.message}`);
   }
 };
 
-/**
- * 6. Finalize topic after session completion
- */
 export const updateTopicAfterSession = async (topicId, data) => {
   try {
     if (!topicId) throw new Error('Topic ID is required.');
 
     const { rating = 0, feedback = '', creditsEarned = 0 } = data;
-
     const docRef = doc(db, 'topics', topicId);
+    
     const updateData = {
       status: 'completed',
       rating: Number(rating),
@@ -170,7 +166,6 @@ export const updateTopicAfterSession = async (topicId, data) => {
     await updateDoc(docRef, updateData);
     return true;
   } catch (error) {
-    console.error(`Error finalizing session for topic ${topicId}:`, error);
     throw new Error(`Failed to finalize session: ${error.message}`);
   }
 };
