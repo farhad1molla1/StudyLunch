@@ -7,7 +7,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import PublicRoute from './components/auth/PublicRoute';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
-// তোমার তৈরি করা আসল UI পেজগুলো কানেক্ট করা হলো
+// Pages
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import Dashboard from './pages/dashboard/Dashboard';
@@ -20,13 +20,8 @@ import Notifications from './pages/notifications/Notifications';
 import Profile from './pages/profile/Profile';
 import SOS from './pages/sos/SOS';
 
-// Fallback Placeholder (যেহেতু আগে এই পেজটি மிসিং ছিল)
-const ProfileSetupPlaceholder = () => (
-  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
-    <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>Profile Setup Wizard</h2>
-    <p style={{ color: 'var(--text-secondary)' }}>Please complete your profile to continue.</p>
-  </div>
-);
+// 🚀 আসল Profile Setup Wizard ইম্পোর্ট করা হলো
+import ProfileSetup from './pages/profile/ProfileSetup';
 
 const App = () => {
   return (
@@ -39,9 +34,10 @@ const App = () => {
           <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
 
           {/* =========== Semi-Protected Route (No Profile Required) =========== */}
+          {/* 🚀 এখানে ডামি প্লেসহোল্ডারের বদলে আসল ProfileSetup বসানো হলো */}
           <Route 
             path="/profile/setup" 
-            element={<ProtectedRoute requireProfile={false}><ProfileSetupPlaceholder /></ProtectedRoute>} 
+            element={<ProtectedRoute requireProfile={false}><ProfileSetup /></ProtectedRoute>} 
           />
 
           {/* =========== Strictly Protected Routes =========== */}
