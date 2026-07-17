@@ -1,0 +1,32 @@
+.premium-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-secondary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  
+  /* STEP 8: Smooth Appearance */
+  animation: badgePop var(--transition-slow) var(--ease-spring) backwards;
+}
+
+/* Logical Variants */
+.badge-open { background: rgba(139, 92, 246, 0.1); color: var(--color-primary); }
+.badge-matched { background: rgba(255, 209, 102, 0.2); color: #B45309; }
+.badge-in_session { background: rgba(59, 130, 246, 0.1); color: #2563EB; }
+.badge-completed { background: rgba(16, 185, 129, 0.15); color: #047857; }
+
+/* Role Variants */
+.badge-mentor { background: linear-gradient(135deg, var(--color-accent), #F59E0B); color: white; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3); }
+.badge-learner { background: linear-gradient(135deg, var(--color-primary), var(--color-pink)); color: white; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3); }
+
+/* Standard Variants */
+.badge-success { background: rgba(167, 243, 208, 0.4); color: #065F46; }
+.badge-danger { background: rgba(254, 226, 226, 1); color: #DC2626; }
+.badge-warning { background: rgba(254, 243, 199, 1); color: #D97706; }
+.badge-info { background: var(--color-bg); color: var(--color-text-secondary); border: 1px solid rgba(0,0,0,0.1); }

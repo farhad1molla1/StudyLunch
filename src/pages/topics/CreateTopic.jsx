@@ -1,219 +1,123 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
-
-// Services & Context
-import { useAuth } from '../../hooks/useAuth';
 import { createTopic } from '../../services/topicService';
-
-// UI Components
-import Card from '../../components/common/Card';
-import Input from '../../components/common/Input';
-import Button from '../../components/common/Button';
-
+import { useAuth } from '../../hooks/useAuth';
+import toast from 'react-hot-toast';
 import './CreateTopic.css';
 
 const CreateTopic = () => {
   const { user, dbUser } = useAuth();
   const navigate = useNavigate();
-
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  
+
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    subject: '',
-    university: dbUser?.university || '',
-    department: dbUser?.department || '',
-    year: dbUser?.academicYear || '',
-    skillsNeeded: '',
-    preferredTime: '',
+    title: '', subject: '', description: '', skillsNeeded: '',
+    preferredTime: '', university: dbUser?.university || '',
+    department: dbUser?.department || '', year: dbUser?.year || ''
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) setError(''); // Clear error on typing
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // 1. Validation
-    if (!formData.title.trim() || !formData.description.trim() || !formData.subject.trim()) {
-      setError('Title, Description, and Subject are required fields.');
-      return;
-    }
-
-    // 2. Data Preparation
-    const topicData = {
-      title: formData.title.trim(),
-      description: formData.description.trim(),
-      subject: formData.subject.trim(),
-      university: formData.university.trim(),
-      department: formData.department.trim(),
-      year: formData.year.trim(),
-      // Split by comma, trim spaces, and remove empty strings
-      skillsNeeded: formData.skillsNeeded
-        .split(',')
-        .map((skill) => skill.trim())
-        .filter((skill) => skill.length > 0),
-      preferredTime: formData.preferredTime.trim(),
-      
-      // User Context Data
-      createdBy: user.uid,
-      creatorName: dbUser?.name || user.displayName || 'Anonymous Student',
-      creatorPhoto: dbUser?.photoURL || user.photoURL || '',
-    };
-
-    // 3. Firestore Integration
+    if (!formData.title || !formData.subject) return toast.error("Title and Subject are required");
+    
+    setLoading(true);
     try {
-      setLoading(true);
-      await createTopic(topicData);
-      toast.success('🎉 Topic created successfully!');
-      
-      // Reset form or navigate away (e.g., to dashboard or topics list)
-      navigate('/dashboard'); 
-    } catch (err) {
-      setError(err.message || 'Failed to create topic. Please try again.');
+      await createTopic({
+        ...formData,
+        createdBy: user.uid,
+        creatorName: dbUser?.name || user.email,
+        status: 'open',
+        createdAt: new Date().toISOString()
+      });
+      toast.success("Learning Request Posted! 🎉");
+      navigate('/topics');
+    } catch (error) {
+      toast.error("Failed to post request.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="create-topic-page">
-      <div className="create-topic-container">
-        <div className="create-topic-header">
-          <h1 className="text-primary">Request a Session</h1>
-          <p className="text-secondary">Fill in the details below to find the perfect mentor or study partner.</p>
+    <div className="create-topic-layout animate-fade-in">
+      
+      {/* A. Page Header */}
+      <header className="page-header">
+        <h1 className="heading-xl">Create a Learning Request</h1>
+        <p className="body subtitle">Tell others what you need help with. A mentor will join you soon!</p>
+      </header>
+
+      {/* B. Main Form Card */}
+      <form className="form-card-premium" onSubmit={handleSubmit}>
+        
+        {/* Group 1: Study Topic */}
+        <div className="form-section">
+          <h3 className="heading-md section-title"><span className="section-icon">📚</span> Study Topic</h3>
+          <div className="form-group">
+            <label className="caption">Topic Title *</label>
+            <input type="text" name="title" className="premium-input" placeholder="e.g. Need help understanding React Hooks" value={formData.title} onChange={handleChange} required />
+          </div>
+          <div className="form-group">
+            <label className="caption">Subject / Course *</label>
+            <input type="text" name="subject" className="premium-input" placeholder="e.g. Web Development" value={formData.subject} onChange={handleChange} required />
+          </div>
+          <div className="form-group">
+            <label className="caption">Detailed Description</label>
+            <textarea name="description" className="premium-textarea" placeholder="Explain what you are stuck on..." rows="4" value={formData.description} onChange={handleChange}></textarea>
+          </div>
         </div>
 
-        <Card variant="default" className="create-topic-card">
-          <form onSubmit={handleSubmit} className="create-topic-form" noValidate>
-            
-            {error && (
-              <div className="create-topic-error" role="alert">
-                {error}
-              </div>
-            )}
-
-            {/* Section 1: Basic Info */}
-            <h3 className="form-section-title">Basic Information</h3>
-            <div className="form-grid">
-              <Input
-                label="Topic Title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                placeholder="e.g. Need help understanding React Hooks"
-                required
-                fullWidth
-                disabled={loading}
-              />
-              <Input
-                label="Subject"
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                placeholder="e.g. Computer Science, Physics"
-                required
-                fullWidth
-                disabled={loading}
-              />
-            </div>
-
+        {/* Group 2: Learning Context */}
+        <div className="form-section">
+          <h3 className="heading-md section-title"><span className="section-icon">🎯</span> Learning Context</h3>
+          <div className="form-row">
             <div className="form-group">
-              {/* Native textarea styled with common input classes to match design system */}
-              <label className="form-label">Description <span className="required-mark">*</span></label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                className="sl-input__field custom-textarea"
-                placeholder="Describe what you want to learn or the problem you are facing..."
-                rows="4"
-                disabled={loading}
-                required
-              />
+              <label className="caption">Skills Needed</label>
+              <input type="text" name="skillsNeeded" className="premium-input" placeholder="e.g. React, JavaScript" value={formData.skillsNeeded} onChange={handleChange} />
             </div>
+            <div className="form-group">
+              <label className="caption">Preferred Time</label>
+              <input type="text" name="preferredTime" className="premium-input" placeholder="e.g. Tomorrow 8 PM" value={formData.preferredTime} onChange={handleChange} />
+            </div>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="caption">University</label>
+              <input type="text" name="university" className="premium-input" value={formData.university} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+              <label className="caption">Department</label>
+              <input type="text" name="department" className="premium-input" value={formData.department} onChange={handleChange} />
+            </div>
+          </div>
+        </div>
 
-            {/* Section 2: Academic Info */}
-            <h3 className="form-section-title">Academic Details</h3>
-            <div className="form-grid form-grid--3-cols">
-              <Input
-                label="University"
-                name="university"
-                value={formData.university}
-                onChange={handleChange}
-                placeholder="e.g. Dhaka University"
-                fullWidth
-                disabled={loading}
-              />
-              <Input
-                label="Department"
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                placeholder="e.g. CSE"
-                fullWidth
-                disabled={loading}
-              />
-              <Input
-                label="Year/Semester"
-                name="year"
-                value={formData.year}
-                onChange={handleChange}
-                placeholder="e.g. 3rd Year"
-                fullWidth
-                disabled={loading}
-              />
+        {/* Group 3: Attachments Placeholder */}
+        <div className="form-section">
+          <h3 className="heading-md section-title"><span className="section-icon">📎</span> Attachments</h3>
+          <div className="attachment-placeholder">
+            <div className="upload-box">
+              <span className="upload-icon">🖼️</span>
+              <p className="body">Upload Image (Coming Soon)</p>
             </div>
+            <div className="upload-box">
+              <span className="upload-icon">📄</span>
+              <p className="body">Upload PDF (Coming Soon)</p>
+            </div>
+          </div>
+        </div>
 
-            {/* Section 3: Learning Data */}
-            <h3 className="form-section-title">Learning Preferences</h3>
-            <div className="form-grid">
-              <Input
-                label="Skills Needed (Comma separated)"
-                name="skillsNeeded"
-                value={formData.skillsNeeded}
-                onChange={handleChange}
-                placeholder="e.g. JavaScript, React, Firebase"
-                fullWidth
-                disabled={loading}
-                helperText="List the specific topics or tools you need help with."
-              />
-              <Input
-                label="Preferred Time"
-                name="preferredTime"
-                value={formData.preferredTime}
-                onChange={handleChange}
-                placeholder="e.g. Weekends, 8 PM - 10 PM"
-                fullWidth
-                disabled={loading}
-              />
-            </div>
+        {/* C & D. Submit & Helper Message */}
+        <div className="form-footer">
+          <p className="helper-text caption">Your topic will appear on the public learning board.</p>
+          <button type="submit" className="btn-submit-premium animate-bounce-hover" disabled={loading}>
+            {loading ? 'Posting...' : 'Post Learning Request'}
+          </button>
+        </div>
 
-            {/* Attachments Placeholder */}
-            <div className="form-group attachment-placeholder">
-              <div className="attachment-box">
-                <span className="attachment-icon">📎</span>
-                <p>Drag & drop reference files here (PDF/Images)</p>
-                <small className="text-secondary">Upload feature coming in the next sprint.</small>
-              </div>
-            </div>
-
-            {/* Submit Action */}
-            <div className="form-actions">
-              <Button type="submit" variant="primary" size="large" loading={loading} fullWidth>
-                Create Topic Request
-              </Button>
-            </div>
-            
-          </form>
-        </Card>
-      </div>
+      </form>
     </div>
   );
 };

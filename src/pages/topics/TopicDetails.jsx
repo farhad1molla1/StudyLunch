@@ -1,260 +1,134 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast'; // Import Toast
 import { getTopicById, acceptTopic } from '../../services/topicService';
 import { useAuth } from '../../hooks/useAuth';
-
-// Common Components
-import Card from '../../components/common/Card';
-import Button from '../../components/common/Button';
-import Badge from '../../components/common/Badge/Badge';
+import toast from 'react-hot-toast';
 import Loader from '../../components/common/Loader/Loader';
-import EmptyState from '../../components/common/EmptyState/EmptyState';
-
+import Badge from '../../components/common/Badge/Badge';
 import './TopicDetails.css';
 
 const TopicDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, dbUser } = useAuth();
   
   const [topic, setTopic] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [accepting, setAccepting] = useState(false); // Accepting loading state
-  const [error, setError] = useState('');
-
-  // Wrap fetch function in useCallback so we can reuse it to refresh data
-  const fetchTopicDetails = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError('');
-      const data = await getTopicById(id);
-      setTopic(data);
-    } catch (err) {
-      setError(err.message || 'Failed to load topic details.');
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
+  const [accepting, setAccepting] = useState(false);
 
   useEffect(() => {
-    if (id) {
-      fetchTopicDetails();
-    }
-  }, [fetchTopicDetails, id]);
+    const fetchTopic = async () => {
+      try {
+        const data = await getTopicById(id);
+        setTopic(data);
+      } catch (error) {
+        toast.error("Failed to load topic.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTopic();
+  }, [id]);
 
-  // Handle Mentor Acceptance
-  const handleAcceptMentor = async () => {
-    if (!user) return;
-    
+  const handleAccept = async () => {
+    if (!topic || topic.status !== 'open') return;
+    setAccepting(true);
     try {
-      setAccepting(true);
-      await acceptTopic(id, user.uid);
-      
-      toast.success('🎉 You are now the mentor for this session.');
-      
-      // Refresh the page data silently to update UI to "matched" state
-      const updatedData = await getTopicById(id);
-      setTopic(updatedData);
-    } catch (err) {
-      toast.error(err.message || 'Failed to accept topic.');
+      await acceptTopic(id, user.uid, dbUser.name);
+      toast.success("Awesome! You are now the mentor.");
+      navigate('/dashboard');
+    } catch (error) {
+      toast.error("Failed to accept topic.");
     } finally {
       setAccepting(false);
     }
   };
 
-  const getBadgeConfig = (status) => {
-    switch (status) {
-      case 'open': return { type: 'primary', label: 'Open' };
-      case 'matched': return { type: 'warning', label: 'Matched' };
-      case 'in_session': return { type: 'success', label: 'In Session' };
-      case 'completed': return { type: 'error', label: 'Completed' };
-      default: return { type: 'primary', label: status || 'Unknown' };
-    }
-  };
+  if (loading) return <Loader variant="page" />;
+  if (!topic) return <div className="animate-fade-in"><h2 className="heading-md">Topic not found</h2></div>;
 
-  if (loading && !accepting && !topic) return <Loader variant="page" />;
-
-  if (error) {
-    return (
-      <div className="topic-details-page center-content">
-        <div className="error-container text-center">
-          <h2 className="text-danger mb-16">Oops!</h2>
-          <p className="text-secondary mb-24">{error}</p>
-          <Button onClick={() => navigate('/dashboard')} variant="outline">Go Back</Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!topic) {
-    return (
-      <div className="topic-details-page center-content">
-        <EmptyState 
-          icon="🔍" 
-          title="Topic Not Found" 
-          description="The learning request you are looking for does not exist or has been removed."
-        />
-        <div style={{ marginTop: '16px', textAlign: 'center' }}>
-          <Button onClick={() => navigate('/dashboard')} variant="primary">Return Home</Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Action Button Logic
-  const badgeConfig = getBadgeConfig(topic.status);
-  const isCreator = user?.uid === topic.createdBy;
-  const isOpen = topic.status === 'open';
-
-  let buttonText = 'Become Mentor';
-  let buttonDisabled = false;
-
-  if (isCreator) {
-    buttonText = 'You cannot mentor your own topic.';
-    buttonDisabled = true;
-  } else if (!isOpen) {
-    buttonText = `Topic is ${badgeConfig.label}`;
-    buttonDisabled = true;
-  }
+  const isCreator = user.uid === topic.createdBy;
+  const isMatched = topic.status !== 'open';
 
   return (
-    <div className="topic-details-page">
-      <div className="td-page-header">
-        <button className="back-button" onClick={() => navigate(-1)}>
-          ← Back to Feed
-        </button>
+    <div className="topic-details-layout animate-fade-in">
+      
+      {/* A. Hero Header */}
+      <div className="details-hero">
+        <Badge type="primary" className="hero-badge">{topic.subject}</Badge>
+        <h1 className="heading-xl">{topic.title}</h1>
+        <div className="hero-meta">
+          <Badge type={isMatched ? "warning" : "success"}>{topic.status.toUpperCase()}</Badge>
+          <span className="meta-time">Posted on {new Date(topic.createdAt).toLocaleDateString()}</span>
+        </div>
       </div>
 
-      <div className="td-grid">
-        {/* Main Content */}
-        <div className="td-main-content">
-          <Card variant="default" className="td-hero-card">
-            <div className="td-hero-header">
-              <Badge type={badgeConfig.type}>{badgeConfig.label}</Badge>
-              <span className="td-subject text-primary">{topic.subject}</span>
+      <div className="details-bento-grid">
+        
+        {/* LEFT COLUMN: Context */}
+        <div className="details-main">
+          
+          {/* C. Problem Description */}
+          <div className="details-card-premium">
+            <h3 className="heading-md section-title">📝 Description</h3>
+            <p className="body description-text">{topic.description || "No description provided."}</p>
+          </div>
+
+          {/* D. Skills Needed */}
+          <div className="details-card-premium">
+            <h3 className="heading-md section-title">🎯 Skills Needed</h3>
+            <div className="skills-container">
+              {topic.skillsNeeded ? topic.skillsNeeded.split(',').map((skill, idx) => (
+                <span key={idx} className="skill-pill-large">{skill.trim()}</span>
+              )) : <p className="body">No specific skills mentioned.</p>}
             </div>
-            
-            <h1 className="td-title">{topic.title}</h1>
+          </div>
 
-            <div className="td-creator-profile">
-              <div className="td-avatar">
-                {topic.creatorPhoto ? (
-                  <img src={topic.creatorPhoto} alt={topic.creatorName} />
-                ) : (
-                  <div className="td-avatar-placeholder">{topic.creatorName?.charAt(0) || 'U'}</div>
-                )}
-              </div>
-              <div className="td-creator-info">
-                <p className="td-creator-name">{topic.creatorName || 'Anonymous User'}</p>
-                <p className="td-creator-role">Topic Creator</p>
-              </div>
+          {/* E. Attachments */}
+          <div className="details-card-premium">
+            <h3 className="heading-md section-title">📎 Attachments</h3>
+            <div className="attachment-view-placeholder">
+              <p className="caption">No files attached to this request.</p>
             </div>
+          </div>
 
-            <div className="td-divider"></div>
-
-            <h3 className="td-section-title">Description</h3>
-            <p className="td-description">{topic.description}</p>
-
-            <div className="td-divider"></div>
-
-            <h3 className="td-section-title">Attachments</h3>
-            <div className="td-attachments">
-              {!topic.attachments || topic.attachments.length === 0 ? (
-                <p className="text-secondary">No attachments provided.</p>
-              ) : (
-                <div className="td-attachment-list">
-                  {topic.attachments.map((file, index) => (
-                    <div key={index} className="td-attachment-item">
-                      {file.type === 'image' ? (
-                        <div className="td-image-preview">
-                          <img src={file.url} alt={file.name || 'Attachment'} />
-                        </div>
-                      ) : (
-                        <div className="td-pdf-preview">
-                          <span className="pdf-icon">📄</span>
-                          <span className="file-name">{file.name || 'Document.pdf'}</span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </Card>
         </div>
 
-        {/* Sidebar */}
-        <div className="td-sidebar">
+        {/* RIGHT COLUMN: Sidebar */}
+        <div className="details-sidebar">
           
-          {/* Action Card */}
-          <Card variant="elevated" className="td-action-card">
-            <h3 className="td-action-title">Ready to help?</h3>
-            <p className="td-action-desc">Share your knowledge and earn credits by mentoring this student.</p>
-            <Button 
-              variant={buttonDisabled ? 'secondary' : 'primary'}
-              fullWidth 
-              size="large"
-              loading={accepting}
-              disabled={buttonDisabled || accepting}
-              onClick={handleAcceptMentor}
-            >
-              {buttonText}
-            </Button>
-          </Card>
+          {/* B. Learner Card */}
+          <div className="details-card-premium learner-card">
+            <div className="learner-avatar">
+              {topic.creatorName?.charAt(0) || 'S'}
+            </div>
+            <div className="learner-info">
+              <h4 className="heading-md">{topic.creatorName}</h4>
+              <p className="caption">Learner</p>
+            </div>
+            <div className="learner-meta">
+              <p className="body">🎓 {topic.university || 'N/A'}</p>
+              <p className="body">📖 {topic.department || 'N/A'}</p>
+            </div>
+          </div>
 
-          {/* Academic & Topic Meta Details */}
-          <Card variant="default" className="td-meta-card">
-            <h3 className="td-meta-title">Academic Details</h3>
-            <ul className="td-meta-list">
-              <li>
-                <span className="meta-label">University</span>
-                <span className="meta-value">{topic.university || 'N/A'}</span>
-              </li>
-              <li>
-                <span className="meta-label">Department</span>
-                <span className="meta-value">{topic.department || 'N/A'}</span>
-              </li>
-              <li>
-                <span className="meta-label">Year</span>
-                <span className="meta-value">{topic.year || 'N/A'}</span>
-              </li>
-              <li>
-                <span className="meta-label">Preferred Time</span>
-                <span className="meta-value">{topic.preferredTime || 'Anytime'}</span>
-              </li>
-            </ul>
-
-            <div className="td-divider"></div>
-
-            <h3 className="td-meta-title">Skills Needed</h3>
-            <div className="td-skills-list">
-              {topic.skillsNeeded && topic.skillsNeeded.length > 0 ? (
-                topic.skillsNeeded.map((skill, index) => (
-                  <span key={index} className="td-skill-badge">{skill}</span>
-                ))
+          {/* F. Mentor Action Card */}
+          <div className="details-card-premium action-card">
+            <h3 className="heading-md">Ready to help?</h3>
+            <p className="body">Share your knowledge and earn credits by mentoring this student.</p>
+            
+            <div className="action-button-wrapper">
+              {isCreator ? (
+                <button className="btn-disabled" disabled>You cannot mentor your own topic</button>
+              ) : isMatched ? (
+                <button className="btn-disabled" disabled>Mentor Already Selected</button>
               ) : (
-                <span className="text-secondary">Not specified</span>
+                <button className="btn-action-premium" onClick={handleAccept} disabled={accepting}>
+                  {accepting ? 'Processing...' : '🚀 Become Mentor'}
+                </button>
               )}
             </div>
-
-            <div className="td-divider"></div>
-
-            <h3 className="td-meta-title">Participants</h3>
-            <div className="td-participants-list">
-              <div className="td-participant-item">
-                <span className="participant-role">Learner:</span>
-                <span className="participant-name">{topic.creatorName || 'Anonymous'}</span>
-              </div>
-              
-              {topic.participants && topic.participants.length > 1 && (
-                <div className="td-participant-item mt-8">
-                  <span className="participant-role">Mentor:</span>
-                  <span className="participant-name text-success">Assigned</span>
-                </div>
-              )}
-            </div>
-          </Card>
+          </div>
 
         </div>
       </div>

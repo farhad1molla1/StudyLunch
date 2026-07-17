@@ -1,14 +1,23 @@
 import React from 'react';
 import Button from '../Button/Button';
+import './EmptyState.css';
 
-const EmptyState = ({ icon, title, description, actionText, onAction }) => {
+const EmptyState = ({ title, message, icon = '📂', actionText, onAction, mascot = false }) => {
   return (
-    <div className="center flex-column text-center" style={{ padding: 'var(--space-48) var(--space-24)', flexDirection: 'column', gap: 'var(--space-16)' }}>
-      {icon && <div style={{ fontSize: '3rem', color: 'var(--color-text-secondary)' }}>{icon}</div>}
-      <h3 className="h3">{title}</h3>
-      <p className="body" style={{ color: 'var(--color-text-secondary)', maxWidth: '400px' }}>{description}</p>
+    <div className="premium-empty-state animate-fade-in">
+      <div className="empty-visual animate-float">
+        {mascot ? (
+          <span className="mascot-face" aria-label="Cat Mascot">( ≽^•⩊•^≼ )</span>
+        ) : (
+          <span className="empty-icon">{icon}</span>
+        )}
+      </div>
+      <h3 className="heading-md">{title}</h3>
+      <p className="body text-muted">{message}</p>
       {actionText && onAction && (
-        <Button onClick={onAction}>{actionText}</Button>
+        <Button variant="primary" onClick={onAction} className="empty-action-btn">
+          {actionText}
+        </Button>
       )}
     </div>
   );

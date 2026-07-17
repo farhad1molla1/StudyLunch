@@ -1,4 +1,4 @@
-import { db } from '../config/firebase'; 
+import { db } from '../firebase/firebase'; 
 import { 
   collection, 
   doc, 
@@ -10,7 +10,7 @@ import {
   where,
   serverTimestamp 
 } from 'firebase/firestore';
-import { getTopicById } from './topicService';
+import { getTopicById, updateTopicStatus } from './topicService';
 
 /**
  * 1. Create a new Session
@@ -39,26 +39,19 @@ export const createSession = async (topicId) => {
       endedAt: null,
       duration: 0,
       notes: '',
-      confirmation: {
-        learner: false,
-        mentor: false
+      confirmation: { learner: false, mentor: false },
+      confirmationTime: { learner: null, mentor: null },
+      checkIn: { learner: false, mentor: false },
+      checkInTime: { learner: null, mentor: null },
+      attendance: { learner: false, mentor: false },
+      // NEW: End Session Schema
+      endRequest: {
+        requested: false,
+        requestedBy: null,
+        requestedAt: null
       },
-      confirmationTime: {
-        learner: null,
-        mentor: null
-      },
-      // NEW: Check-in System schema
-      checkIn: {
-        learner: false,
-        mentor: false
-      },
-      checkInTime: {
-        learner: null,
-        mentor: null
-      },
-      attendance: {
-        learner: false,
-        mentor: false
+      endConfirmation: {
+        learner: false
       },
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
@@ -143,23 +136,15 @@ export const scheduleSession = async (sessionId, scheduleData) => {
     if (!docSnap.exists()) throw new Error('Session not found.');
     
     const session = docSnap.data();
-    if (session.status !== 'scheduled') {
-      throw new Error(`Cannot schedule a session that is currently '${session.status}'.`);
-    }
+    if (session.status !== 'scheduled') throw new Error(`Cannot schedule a session that is currently '${session.status}'.`);
 
     const { scheduledTime, duration, meetingType, meetingLocation, meetingLink } = scheduleData;
-
-    const updateData = {
-      scheduledTime, 
-      duration: Number(duration),
-      meetingType,
-      updatedAt: serverTimestamp()
-    };
+    const updateData = { scheduledTime, duration: Number(duration), meetingType, updatedAt: serverTimestamp() };
 
     if (meetingType === 'offline') {
       updateData.meetingLocation = meetingLocation;
       updateData.meetingLink = '';
-    } else if (meetingType === 'online') {
+    } else {
       updateData.meetingLink = meetingLink;
       updateData.meetingLocation = '';
     }
@@ -183,19 +168,14 @@ export const confirmSession = async (sessionId, userId) => {
     if (!docSnap.exists()) throw new Error('Session not found.');
 
     const session = docSnap.data();
-
-    if (session.status !== 'scheduled') {
-      throw new Error(`Cannot confirm a session that is '${session.status}'.`);
-    }
+    if (session.status !== 'scheduled') throw new Error(`Cannot confirm a session that is '${session.status}'.`);
 
     let role = null;
     if (session.learnerId === userId) role = 'learner';
     else if (session.mentorId === userId) role = 'mentor';
-    else throw new Error('Unauthorized. Only assigned participants can confirm.');
+    else throw new Error('Unauthorized.');
 
-    if (session.confirmation[role]) {
-      throw new Error('You have already confirmed this session.');
-    }
+    if (session.confirmation[role]) throw new Error('You have already confirmed this session.');
 
     const updatedConfirmation = { ...session.confirmation, [role]: true };
     const updatedConfirmationTime = { ...session.confirmationTime, [role]: serverTimestamp() };
@@ -218,18 +198,8 @@ export const confirmSession = async (sessionId, userId) => {
   }
 };
 
-export const getConfirmationStatus = async (sessionId) => {
-  try {
-    const session = await getSession(sessionId);
-    if (!session) throw new Error('Session not found.');
-    return session.confirmation;
-  } catch (error) {
-    throw new Error(`Failed to fetch confirmation status: ${error.message}`);
-  }
-};
-
 /**
- * 7. ⭐ Check-in System (New)
+ * 7. Check-in System
  */
 export const checkIn = async (sessionId, userId) => {
   try {
@@ -240,34 +210,21 @@ export const checkIn = async (sessionId, userId) => {
     if (!docSnap.exists()) throw new Error('Session not found.');
 
     const session = docSnap.data();
-
-    // Validations
-    if (session.status !== 'ready') {
-      throw new Error(`Cannot check in. Session status must be 'ready', currently is '${session.status}'.`);
-    }
+    if (session.status !== 'ready') throw new Error(`Cannot check in. Session is '${session.status}'.`);
 
     let role = null;
     if (session.learnerId === userId) role = 'learner';
     else if (session.mentorId === userId) role = 'mentor';
-    else throw new Error('Unauthorized. Only assigned participants can check in.');
+    else throw new Error('Unauthorized.');
 
-    if (session.checkIn[role]) {
-      throw new Error('You have already checked in for this session.');
-    }
+    if (session.checkIn[role]) throw new Error('You have already checked in.');
 
-    // Update Check-in Data
     const updatedCheckIn = { ...session.checkIn, [role]: true };
     const updatedCheckInTime = { ...session.checkInTime, [role]: serverTimestamp() };
     
-    const updatePayload = {
-      checkIn: updatedCheckIn,
-      checkInTime: updatedCheckInTime,
-      updatedAt: serverTimestamp()
-    };
+    const updatePayload = { checkIn: updatedCheckIn, checkInTime: updatedCheckInTime, updatedAt: serverTimestamp() };
 
     let newStatus = session.status;
-    
-    // ⭐ Business Rule 6: Both Checked In -> Auto-start
     if (updatedCheckIn.learner && updatedCheckIn.mentor) {
       newStatus = 'in_progress';
       updatePayload.status = newStatus;
@@ -281,63 +238,81 @@ export const checkIn = async (sessionId, userId) => {
   }
 };
 
-export const getCheckInStatus = async (sessionId) => {
-  try {
-    const session = await getSession(sessionId);
-    if (!session) throw new Error('Session not found.');
-    return session.checkIn;
-  } catch (error) {
-    throw new Error(`Failed to fetch check-in status: ${error.message}`);
-  }
-};
-
 /**
- * 8. Manual Start (Legacy / Override)
+ * 8. ⭐ Request to End Session (Mentor Action)
  */
-export const startSession = async (sessionId) => {
+export const requestEndSession = async (sessionId, mentorId) => {
   try {
-    if (!sessionId) throw new Error('Session ID is required.');
+    if (!sessionId || !mentorId) throw new Error('Session ID and Mentor ID are required.');
+
     const docRef = doc(db, 'sessions', sessionId);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) throw new Error('Session not found.');
+
+    const session = docSnap.data();
+    if (session.mentorId !== mentorId) throw new Error('Unauthorized. Only the mentor can request to end the session.');
+    if (session.status !== 'in_progress') throw new Error('Session is not currently in progress.');
+    if (session.endRequest.requested) throw new Error('End session request already sent.');
+
     await updateDoc(docRef, {
-      status: 'in_progress',
-      startedAt: serverTimestamp(),
+      endRequest: {
+        requested: true,
+        requestedBy: mentorId,
+        requestedAt: serverTimestamp()
+      },
+      status: 'waiting_end_confirmation',
       updatedAt: serverTimestamp()
     });
+
     return true;
   } catch (error) {
-    throw new Error(`Failed to start session: ${error.message}`);
+    throw new Error(`Failed to request end session: ${error.message}`);
   }
 };
 
 /**
- * 9. End a session and calculate actual duration
+ * 9. ⭐ Confirm End Session (Learner Action)
  */
-export const endSession = async (sessionId) => {
+export const confirmEndSession = async (sessionId, learnerId) => {
   try {
-    if (!sessionId) throw new Error('Session ID is required.');
+    if (!sessionId || !learnerId) throw new Error('Session ID and Learner ID are required.');
 
     const docRef = doc(db, 'sessions', sessionId);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) throw new Error('Session not found.');
 
     const sessionData = docSnap.data();
-    let actualDurationInMinutes = 0;
+    if (sessionData.learnerId !== learnerId) throw new Error('Unauthorized. Only the learner can confirm the session end.');
+    if (sessionData.status !== 'waiting_end_confirmation') throw new Error('Invalid session status for end confirmation.');
+    if (sessionData.endConfirmation.learner) throw new Error('You have already confirmed the end of this session.');
 
+    // Calculate Final Duration
+    let actualDurationInMinutes = 0;
     if (sessionData.startedAt) {
       const startTime = sessionData.startedAt.toDate();
       const endTime = new Date();
       actualDurationInMinutes = Math.round((endTime - startTime) / 60000);
     }
 
+    // Update Session
     await updateDoc(docRef, {
+      endConfirmation: { learner: true },
       status: 'completed',
       endedAt: serverTimestamp(),
       duration: actualDurationInMinutes,
       updatedAt: serverTimestamp()
     });
 
+    // Automatically update Topic status to completed
+    try {
+       await updateTopicStatus(sessionData.topicId, 'completed');
+    } catch (err) {
+       console.error("Failed to update topic status to completed:", err);
+       // We don't fail the session confirmation if topic update fails, but we log it.
+    }
+
     return { success: true, duration: actualDurationInMinutes };
   } catch (error) {
-    throw new Error(`Failed to end session: ${error.message}`);
+    throw new Error(`Failed to confirm end session: ${error.message}`);
   }
 };

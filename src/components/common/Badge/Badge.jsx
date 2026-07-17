@@ -1,8 +1,9 @@
 import React from 'react';
+import './Badge.css';
 
-const Badge = ({ children, type = 'primary' }) => {
+const Badge = ({ children, type = 'info', className = '' }) => {
   return (
-    <span className={`badge badge-${type}`}>
+    <span className={`premium-badge badge-${type} ${className}`}>
       {children}
     </span>
   );

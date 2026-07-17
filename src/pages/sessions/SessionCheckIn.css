@@ -1,0 +1,12 @@
+.checkpoint-layout { display: flex; justify-content: center; align-items: center; min-height: 70vh; }
+.checkpoint-card { max-width: 600px; width: 100%; padding: var(--space-xxl); }
+.subtitle { margin-bottom: var(--space-xl); color: var(--color-text-secondary); }
+.session-info-pill { background: var(--color-bg); padding: var(--space-md); border-radius: var(--radius-full); text-align: center; margin-bottom: var(--space-lg); border: 1px solid rgba(139, 92, 246, 0.2); }
+.participants-status { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl); background: var(--color-bg); padding: var(--space-lg); border-radius: var(--radius-lg); }
+.p-card { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); flex: 1; }
+.p-avatar { width: 64px; height: 64px; border-radius: var(--radius-full); background: var(--color-secondary); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: bold; box-shadow: var(--shadow-soft); }
+.p-avatar.mentor-bg { background: var(--color-accent); }
+.p-divider { font-size: 2rem; opacity: 0.5; }
+.status-badge { padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: bold; }
+.status-badge.success { background: rgba(167, 243, 208, 0.4); color: #065f46; }
+.status-badge.warning { background: rgba(255, 209, 102, 0.3); color: #b45309; }

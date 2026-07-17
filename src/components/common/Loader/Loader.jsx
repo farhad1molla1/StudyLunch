@@ -1,22 +1,15 @@
 import React from 'react';
+import './Loader.css';
 
-const Loader = ({ variant = 'small' }) => {
-  const spinnerStyle = {
-    border: '3px solid var(--color-border)',
-    borderTopColor: 'var(--color-primary)',
-    borderRadius: '50%',
-    animation: 'spin 1s linear infinite'
+const Loader = ({ variant = 'spinner', mascot = false, fullPage = false }) => {
+  const renderLoader = () => {
+    if (mascot) return <div className="loader-mascot animate-bounce">( ≽^•⩊•^≼ ) <span className="dots">...</span></div>;
+    if (variant === 'dots') return <div className="loader-dots"><span></span><span></span><span></span></div>;
+    return <div className="loader-spinner"></div>;
   };
 
-  if (variant === 'page') {
-    return (
-      <div className="center" style={{ height: '100vh', width: '100%' }}>
-        <div style={{ ...spinnerStyle, width: '48px', height: '48px' }}></div>
-      </div>
-    );
-  }
-
-  return <div style={{ ...spinnerStyle, width: '24px', height: '24px' }}></div>;
+  if (fullPage) return <div className="full-page-loader">{renderLoader()}</div>;
+  return <div className="inline-loader">{renderLoader()}</div>;
 };
 
 export default Loader;
