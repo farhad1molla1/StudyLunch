@@ -1,18 +1,26 @@
+@import './styles/variables.css';
+@import './styles/animations.css';
+
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
-html,
-body,
-#root {
+body, html {
   width: 100%;
-  min-height: 100%;
+  height: 100vh;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Poppins', 'Nunito', system-ui, -apple-system, sans-serif;
+  overflow: hidden; /* MainLayout handles scrolling */
 }
 
-body {
-  font-family: Inter, Arial, sans-serif;
-  background-color: #f7f9fc;
-  color: #222;
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
 }

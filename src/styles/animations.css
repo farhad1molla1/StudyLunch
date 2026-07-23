@@ -1,60 +1,18 @@
-/* =========================================
-   STUDYLUNCH ANIMATION SYSTEM (UI STEP-8)
-   ========================================= */
-
-/* 1. Page Entrance (Fade In & Slide Up) */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-in, 
-.animate-slide-up {
-  animation: fadeInUp var(--transition-slow) var(--ease-out-back) forwards;
+@keyframes gentleFloat {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
 }
 
-/* 2. Badge & Element Pop */
-@keyframes badgePop {
-  0% { opacity: 0; transform: scale(0.8); }
-  100% { opacity: 1; transform: scale(1); }
+.animate-fade-up {
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* 3. Float (For Mascot) */
-@keyframes mascotFloat {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-
-/* 4. Mascot Blink (Cute Micro-interaction) */
-@keyframes mascotBlink {
-  0%, 96%, 98%, 100% { transform: scaleY(1); }
-  97%, 99% { transform: scaleY(0.1); }
-}
-
-/* 5. Pulse (For Live states) */
-@keyframes pulseGlow {
-  0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
-  70% { box-shadow: 0 0 0 8px rgba(139, 92, 246, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
-}
-
-/* 6. Shimmer (Skeleton Loaders) */
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-/* 🛑 ACCESSIBILITY: REDUCED MOTION SUPPORT */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-  
-  .animate-float, .mascot-face {
-    animation: none !important;
-    transform: none !important;
-  }
+.animate-float {
+  animation: gentleFloat 4s ease-in-out infinite;
 }

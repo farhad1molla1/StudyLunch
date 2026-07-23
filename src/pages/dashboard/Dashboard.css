@@ -1,241 +1,244 @@
-/* =========================================
-   DIGITAL STUDY CAFÉ DASHBOARD UI
-   ========================================= */
-
-.dashboard-layout {
+.dashboard-page {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xl);
+  gap: var(--space-lg);
+  padding-bottom: 40px;
 }
 
-.section-title {
-  margin-bottom: var(--space-md);
+.dashboard-title {
   color: var(--ink-blue);
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
 }
 
-/* =========================================
-   1. HERO SECTION (Warm, Gradient & Digital)
-   ========================================= */
-.hero-cafe {
-  position: relative;
-  /* Deep, expressive gradient to establish the brand anchor */
-  background: linear-gradient(135deg, var(--surface-cool) 0%, var(--primary-soft) 40%, var(--apricot-soft) 100%);
-  border: var(--border-style);
-  border-radius: var(--radius-xl); 
-  padding: var(--space-xl) var(--space-xxl);
+/* 3D Card Base */
+.card-3d {
+  background-color: var(--surface);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-soft);
+  padding: var(--space-lg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-3d.pressable:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-3d);
+}
+
+/* Hero Section */
+.welcome-hero {
+  background: linear-gradient(135deg, var(--surface-cool), var(--primary-soft), var(--apricot-soft));
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  overflow: hidden;
+  align-items: center;
+  padding: 40px var(--space-xl);
 }
 
-.hero-text { position: relative; z-index: 2; }
-.hero-title { margin: 0 0 4px 0; color: var(--ink-blue); text-shadow: 0 2px 4px rgba(255,255,255,0.8); }
-.hero-subtitle { margin: 0; color: var(--text-main); font-size: 1.1rem; opacity: 0.9; }
+.hero-text-content h2 {
+  color: var(--ink-blue);
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
 
-/* Keep icons extremely minimal (only 2) */
-.hero-decor {
-  display: flex;
-  gap: var(--space-md);
-  font-size: 2.8rem;
-  z-index: 2;
+.hero-text-content p {
+  color: var(--text-soft);
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.hero-icons {
+  font-size: 4rem;
   opacity: 0.9;
-  filter: drop-shadow(0 4px 12px rgba(46, 111, 115, 0.15));
 }
 
-/* =========================================
-   2. UPPER GRID (Today's Focus & Quote)
-   ========================================= */
-.dash-upper-grid {
+/* Grids */
+.dashboard-top-grid {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-lg);
 }
 
-/* Focus Chips (Rich tinted backgrounds) */
+.dashboard-main-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-lg);
+}
+
+.section-label {
+  color: var(--text-main);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Focus Chips */
 .focus-chips {
   display: flex;
-  gap: var(--space-md);
+  gap: 16px;
   flex-wrap: wrap;
 }
 
-.focus-chip {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  border-radius: var(--radius-full);
-  border: var(--border-style);
-  /* Glossy 3D inner highlight */
-  box-shadow: inset 0 2px 4px rgba(255,255,255,0.7), 0 4px 12px rgba(48, 39, 30, 0.05);
-  font-family: var(--font-secondary);
+.chip {
+  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
   font-size: 0.95rem;
-  color: var(--text-main);
-  transition: transform var(--transition-fast);
-}
-.focus-chip:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
-
-.f-icon { font-size: 1.2rem; }
-.f-text strong { font-weight: 800; color: var(--ink-blue); }
-
-/* Quote Card (Rich Ink-Blue tint, elegant Apricot line) */
-.quote-card-ink {
-  background: var(--ink-blue-soft); /* Ensures it is NOT white */
-  border: var(--border-style);
-  border-left: 3px solid var(--apricot); /* Elegant accent */
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg) var(--space-xl);
-  box-shadow: var(--shadow-soft);
-  position: relative;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: calc(100% - 38px);
+  align-items: center;
+  gap: 8px;
 }
-.quote-mark {
+
+.chip.sessions { background-color: var(--primary-soft); color: var(--primary-dark); border-color: #C2E2E2; }
+.chip.waiting { background-color: var(--apricot-soft); color: #B87222; border-color: #FAD1A1; }
+.chip.alerts { background-color: var(--mint-soft); color: #2C7A54; border-color: #CBEFDF; }
+
+/* Quote */
+.quote-section {
+  background-color: var(--surface-cool);
+  position: relative;
+  overflow: hidden;
+}
+
+.quote-section::before {
+  content: '';
   position: absolute;
-  top: 10px;
-  left: 20px;
-  font-size: 4rem;
-  color: var(--surface);
-  font-family: serif;
-  line-height: 1;
-  opacity: 0.5;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background-color: var(--apricot);
+  border-top-left-radius: var(--radius-card);
+  border-bottom-left-radius: var(--radius-card);
 }
+
 .quote-text {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-main);
-  margin: 0 0 12px 0;
-  position: relative;
-  z-index: 2;
-  line-height: 1.5;
+  font-size: 1.2rem;
+  color: var(--ink-blue);
+  font-weight: 500;
+  line-height: 1.6;
 }
+
 .quote-author {
-  margin: 0;
-  text-align: right;
-  color: var(--primary-dark);
-  font-weight: 800;
-  position: relative;
-  z-index: 2;
+  margin-top: 16px;
+  font-size: 0.95rem;
+  color: var(--text-soft);
+  font-weight: 600;
 }
 
-/* Rich Color Tokens */
-.bg-primary-soft { background: var(--primary-soft); }
-.bg-apricot-soft { background: var(--apricot-soft); }
-.bg-mint-soft { background: var(--mint-soft); }
-.bg-mint { background: var(--mint); }
-.bg-ink-blue-soft { background: var(--ink-blue-soft); }
-
-/* =========================================
-   3. MAIN BENTO GRID & CARDS
-   ========================================= */
-.dash-bento-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: var(--space-lg);
-}
-
-/* Base Dashboard Card */
-.dashboard-card-cafe {
-  background: var(--surface); 
-  border-radius: var(--radius-lg);
-  border: var(--border-style);
-  padding: var(--space-xl);
-  box-shadow: var(--shadow-soft);
-  height: 100%;
-}
-
-/* Session Card */
-.session-item-cafe {
-  background: var(--surface-tint); /* Popping slightly off the background */
-  border: var(--border-style);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  box-shadow: inset 0 2px 4px rgba(255,255,255,0.9), 0 4px 12px rgba(48, 39, 30, 0.05);
-  cursor: pointer;
-  transition: transform var(--transition-fast);
-}
-.session-item-cafe:hover { transform: translateY(-2px); box-shadow: var(--shadow-3d); }
-
-.s-date-cafe {
-  color: var(--primary-dark);
-  border: var(--border-style);
-  border-radius: 12px;
-  padding: 10px;
+/* Upcoming Session Empty State */
+.upcoming-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  min-width: 60px;
-}
-.s-day { font-size: 1.5rem; font-weight: 800; line-height: 1; }
-.s-month { font-size: 0.8rem; font-weight: 800; text-transform: uppercase; }
-
-.s-info { flex: 1; }
-.s-info h3 { margin: 0 0 4px 0; font-weight: 800; color: var(--ink-blue); }
-.s-info p { margin: 0; color: var(--text-soft); }
-
-.btn-cafe-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
-  border: none;
-  border-radius: var(--radius-full);
-  padding: 8px 16px;
-  font-family: var(--font-primary);
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: var(--shadow-3d);
-  transition: transform 0.1s;
-}
-.btn-cafe-primary:active { transform: translateY(2px); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
-
-/* Learning Stats Grid */
-.stats-grid-cafe {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-md);
 }
 
-.stat-tile {
-  border: var(--border-style);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  /* Deep glossy highlight for the 3D vibe */
-  box-shadow: inset 0 2px 4px rgba(255,255,255,0.7), 0 4px 12px rgba(48, 39, 30, 0.05);
-}
-
-.stat-icon { font-size: 24px; margin-bottom: 4px; }
-.stat-num { font-family: var(--font-primary); font-size: 1.5rem; font-weight: 800; color: var(--ink-blue); }
-.stat-name { font-family: var(--font-secondary); font-size: 0.85rem; font-weight: 700; color: var(--text-soft); }
-
-/* =========================================
-   MASCOT EMPTY STATE (Tinted Depth)
-   ========================================= */
-.empty-state-cafe {
+.empty-state-card {
+  flex: 1;
+  background-color: var(--surface-tint);
+  border-radius: 20px;
+  border: 1px dashed var(--border-soft);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-xl);
   text-align: center;
-  background: var(--surface-tint); /* Not plain white */
-  border-radius: var(--radius-md);
-  border: 1px dashed var(--border-soft);
-  box-shadow: inset 0 4px 10px rgba(0,0,0,0.02);
+  padding: var(--space-xl) 0;
+  margin-top: 8px;
 }
-.chibi-cat-svg { margin-bottom: 12px; }
-.empty-state-cafe h3 { color: var(--ink-blue); margin: 0 0 4px 0; }
+
+.css-cat-mascot {
+  width: 70px;
+  height: 55px;
+  background-color: #FFFFFF;
+  border: 2px solid var(--border-soft);
+  border-radius: 35px;
+  position: relative;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.04);
+}
+
+.css-cat-ear {
+  position: absolute;
+  top: -10px;
+  width: 0; 
+  height: 0; 
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid #FFFFFF;
+  z-index: -1;
+}
+.ear-left { left: 4px; transform: rotate(-15deg); }
+.ear-right { right: 4px; transform: rotate(15deg); }
+
+.css-cat-face {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--text-soft);
+  transform: translateY(2px);
+  letter-spacing: 1px;
+}
+
+.empty-text {
+  color: var(--ink-blue);
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.stat-box {
+  border: 1px solid var(--border-soft);
+  border-radius: 20px;
+  padding: 24px 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.stat-asked { background-color: var(--ink-blue-soft); }
+.stat-helped { background-color: var(--mint); }
+.stat-completed { background-color: var(--primary-soft); }
+.stat-trust { background-color: var(--apricot-soft); }
+
+.stat-value {
+  font-size: 2.2rem;
+  color: var(--ink-blue);
+  font-weight: 800;
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-main);
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-top-grid, .dashboard-main-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+}
 
 @media (max-width: 768px) {
-  .dash-upper-grid { grid-template-columns: 1fr; }
-  .dash-bento-grid { grid-template-columns: 1fr; }
-  .hero-cafe { flex-direction: column; text-align: center; gap: var(--space-md); }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .welcome-hero { flex-direction: column; text-align: center; gap: 20px; }
+  .hero-icons { display: none; }
 }

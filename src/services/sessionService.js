@@ -24,6 +24,7 @@ export const getSessionById = async (sessionId) => {
   if (!docSnap.exists()) throw new Error("Session not found");
   return { id: docSnap.id, ...docSnap.data() };
 };
+export const getSession = getSessionById;
 
 export const getSessionByTopic = async (topicId) => {
   const q = query(collection(db, 'sessions'), where("topicId", "==", topicId));
@@ -46,16 +47,22 @@ export const getSessionsByUser = async (userId) => {
   
   return sessions;
 };
+export const getUserSessions = getSessionsByUser;
 
 export const updateSessionStatus = async (sessionId, status) => {
   const sessionRef = doc(db, 'sessions', sessionId);
   await updateDoc(sessionRef, { status, updatedAt: serverTimestamp() });
 };
 
+export const saveSessionNotes = async (sessionId, notes) => {
+  const sessionRef = doc(db, 'sessions', sessionId);
+  await updateDoc(sessionRef, { notes, updatedAt: serverTimestamp() });
+};
+
 export const requestEndSession = async (sessionId, requestedByUid) => {
   const sessionRef = doc(db, 'sessions', sessionId);
   await updateDoc(sessionRef, { 
-    status: 'end_requested',
+    status: 'waiting_end_confirmation',
     endRequest: { requested: true, requestedBy: requestedByUid, requestedAt: serverTimestamp() },
     updatedAt: serverTimestamp() 
   });
@@ -67,9 +74,4 @@ export const confirmEndSession = async (sessionId) => {
     status: 'completed', 
     updatedAt: serverTimestamp() 
   });
-};
-
-export const saveSessionNotes = async (sessionId, notes) => {
-  const sessionRef = doc(db, 'sessions', sessionId);
-  await updateDoc(sessionRef, { notes, updatedAt: serverTimestamp() });
 };

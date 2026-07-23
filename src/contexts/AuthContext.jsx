@@ -1,81 +1,54 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
-import { auth } from '../firebase/firebase';
+import { subscribeToAuthChanges, login, signup, logout, googleLogin } from '../services/authService';
 import { getUser, updateLastActive } from '../services/userService';
-import { 
-  login as authLogin, 
-  signup as authSignup, 
-  googleLogin as authGoogleLogin, 
-  resetPassword as authResetPassword 
-} from '../services/authService';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [dbUser, setDbUser] = useState(null);
-  const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        setUser(firebaseUser);
-        try {
-          const profileRes = await getUser(firebaseUser.uid);
-          
-          if (profileRes && profileRes.success && profileRes.data) {
-            setDbUser(profileRes.data);
-            setIsProfileComplete(!!profileRes.data.university);
-            
-            // Update last active on session restore/login
-            await updateLastActive(firebaseUser.uid);
-          } else {
-            setDbUser(null);
-            setIsProfileComplete(false);
+    const unsubscribe = subscribeToAuthChanges(async (user) => {
+      try {
+        if (user) {
+          setCurrentUser(user);
+          // Safely attempt DB calls. If they fail, auth still works!
+          try {
+            await updateLastActive(user.uid);
+            const profile = await getUser(user.uid);
+            setDbUser(profile);
+          } catch (dbErr) {
+            console.error("Firestore user fetch failed, but Auth is okay:", dbErr);
           }
-        } catch (error) {
-          console.error("Failed to synchronize session.");
+        } else {
+          setCurrentUser(null);
+          setDbUser(null);
         }
-      } else {
-        setUser(null);
-        setDbUser(null);
-        setIsProfileComplete(false);
+      } catch (err) {
+        console.error("Auth state error:", err);
+      } finally {
+        // ALWAYS set loading to false so the app renders
+        setLoading(false); 
       }
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return unsubscribe;
   }, []);
 
-  const logout = async () => {
-    setLoading(true);
-    try {
-      await firebaseSignOut(auth);
-      setUser(null);
-      setDbUser(null);
-      setIsProfileComplete(false);
-    } catch (error) {
-      console.error("Logout failed.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // NEVER return null or a blank screen. Always show a safe loader.
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-main, #F3E9DB)', color: 'var(--ink-blue, #2D3A6B)', fontFamily: 'sans-serif', fontWeight: 'bold' }}>
+        Booting StudyLunch...
+      </div>
+    );
+  }
 
-  const value = {
-    user,
-    dbUser,
-    isProfileComplete,
-    loading,
-    login: authLogin,
-    signup: authSignup,
-    googleLogin: authGoogleLogin,
-    resetPassword: authResetPassword,
-    logout
-  };
-
+  // Passing both 'user' and 'currentUser' to support legacy hooks
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ currentUser, user: currentUser, dbUser, loading, login, signup, logout, googleLogin }}>
       {children}
     </AuthContext.Provider>
   );

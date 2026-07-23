@@ -31,8 +31,10 @@ const TopicDetails = () => {
     try {
       setActionLoading(true);
       
+      // 1. Topic accept korche ebang validate korche
       const topicData = await acceptTopic(topic.id, user.uid);
       
+      // 2. Automatically Session create korche
       const newSessionId = await createSession(
         topic.id, 
         topicData.createdBy, 
@@ -42,7 +44,7 @@ const TopicDetails = () => {
       alert("Successfully matched! Session created.");
       navigate(`/sessions/${newSessionId}`); 
     } catch (error) {
-      alert(error.message);
+      alert(error.message || "Something went wrong. Please try again.");
     } finally {
       setActionLoading(false);
     }
@@ -77,7 +79,6 @@ const TopicDetails = () => {
         <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
           <div className="focus-chip" style={{ background: 'var(--apricot-soft)', padding: '8px 16px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ink-blue)', fontWeight: 'bold' }}>
             <span>📌</span>
-            {/* Added safety check for status */}
             <span>Status: {topic.status ? topic.status.toUpperCase() : 'OPEN'}</span>
           </div>
           <div className="focus-chip" style={{ background: 'var(--mint-soft)', padding: '8px 16px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ink-blue)', fontWeight: 'bold' }}>

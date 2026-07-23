@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, updateDoc, getDoc, getDocs, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, getDoc, getDocs, query, where, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; 
 
 export const createTopic = async (topicData) => {
@@ -33,7 +33,6 @@ export const acceptTopic = async (topicId, mentorId) => {
   if (topicData.createdBy === mentorId) {
     throw new Error("You cannot mentor your own topic.");
   }
-  
   if (topicData.status !== 'open') {
     throw new Error("This topic is no longer available.");
   }
@@ -41,6 +40,7 @@ export const acceptTopic = async (topicId, mentorId) => {
   await updateDoc(topicRef, {
     status: 'matched',
     acceptedBy: mentorId,
+    participants: [topicData.createdBy, mentorId],
     updatedAt: serverTimestamp()
   });
 
