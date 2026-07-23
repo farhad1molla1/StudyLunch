@@ -1,136 +1,140 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTopicById, acceptTopic } from '../../services/topicService';
 import { useAuth } from '../../hooks/useAuth';
-import toast from 'react-hot-toast';
-import Loader from '../../components/common/Loader/Loader';
-import Badge from '../../components/common/Badge/Badge';
-import './TopicDetails.css';
+import { getTopicById, acceptTopic } from '../../services/topicService';
+import { createSession } from '../../services/sessionService';
 
 const TopicDetails = () => {
-  const { id } = useParams();
+  const { topicId } = useParams();
   const navigate = useNavigate();
-  const { user, dbUser } = useAuth();
+  const { user } = useAuth();
   
   const [topic, setTopic] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [accepting, setAccepting] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     const fetchTopic = async () => {
       try {
-        const data = await getTopicById(id);
+        const data = await getTopicById(topicId);
         setTopic(data);
       } catch (error) {
-        toast.error("Failed to load topic.");
+        console.error("Error fetching topic:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchTopic();
-  }, [id]);
+    if (topicId) fetchTopic();
+  }, [topicId]);
 
-  const handleAccept = async () => {
-    if (!topic || topic.status !== 'open') return;
-    setAccepting(true);
+  const handleAcceptTopic = async () => {
     try {
-      await acceptTopic(id, user.uid, dbUser.name);
-      toast.success("Awesome! You are now the mentor.");
-      navigate('/dashboard');
+      setActionLoading(true);
+      
+      const topicData = await acceptTopic(topic.id, user.uid);
+      
+      const newSessionId = await createSession(
+        topic.id, 
+        topicData.createdBy, 
+        user.uid             
+      );
+      
+      alert("Successfully matched! Session created.");
+      navigate(`/sessions/${newSessionId}`); 
     } catch (error) {
-      toast.error("Failed to accept topic.");
+      alert(error.message);
     } finally {
-      setAccepting(false);
+      setActionLoading(false);
     }
   };
 
-  if (loading) return <Loader variant="page" />;
-  if (!topic) return <div className="animate-fade-in"><h2 className="heading-md">Topic not found</h2></div>;
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
+        <h3 className="heading-md" style={{ color: 'var(--text-soft)' }}>Loading topic...</h3>
+      </div>
+    );
+  }
 
-  const isCreator = user.uid === topic.createdBy;
-  const isMatched = topic.status !== 'open';
+  if (!topic) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
+        <h3 className="heading-md" style={{ color: 'var(--ink-blue)' }}>Topic not found.</h3>
+      </div>
+    );
+  }
+
+  const isCreator = user?.uid === topic.createdBy;
 
   return (
-    <div className="topic-details-layout animate-fade-in">
-      
-      {/* A. Hero Header */}
-      <div className="details-hero">
-        <Badge type="primary" className="hero-badge">{topic.subject}</Badge>
-        <h1 className="heading-xl">{topic.title}</h1>
-        <div className="hero-meta">
-          <Badge type={isMatched ? "warning" : "success"}>{topic.status.toUpperCase()}</Badge>
-          <span className="meta-time">Posted on {new Date(topic.createdAt).toLocaleDateString()}</span>
-        </div>
-      </div>
-
-      <div className="details-bento-grid">
+    <div className="animate-fade-in" style={{ paddingBottom: '40px' }}>
+      <div className="dashboard-card-cafe" style={{ maxWidth: '800px', margin: '0 auto', background: 'var(--surface)', borderRadius: 'var(--radius-lg)', border: 'var(--border-style)', padding: 'var(--space-xl)', boxShadow: 'var(--shadow-soft)' }}>
         
-        {/* LEFT COLUMN: Context */}
-        <div className="details-main">
-          
-          {/* C. Problem Description */}
-          <div className="details-card-premium">
-            <h3 className="heading-md section-title">📝 Description</h3>
-            <p className="body description-text">{topic.description || "No description provided."}</p>
+        <h1 className="heading-xl" style={{ color: 'var(--ink-blue)', marginBottom: '16px' }}>
+          {topic.title || "Untitled Request"}
+        </h1>
+        
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
+          <div className="focus-chip" style={{ background: 'var(--apricot-soft)', padding: '8px 16px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ink-blue)', fontWeight: 'bold' }}>
+            <span>📌</span>
+            {/* Added safety check for status */}
+            <span>Status: {topic.status ? topic.status.toUpperCase() : 'OPEN'}</span>
           </div>
-
-          {/* D. Skills Needed */}
-          <div className="details-card-premium">
-            <h3 className="heading-md section-title">🎯 Skills Needed</h3>
-            <div className="skills-container">
-              {topic.skillsNeeded ? topic.skillsNeeded.split(',').map((skill, idx) => (
-                <span key={idx} className="skill-pill-large">{skill.trim()}</span>
-              )) : <p className="body">No specific skills mentioned.</p>}
-            </div>
+          <div className="focus-chip" style={{ background: 'var(--mint-soft)', padding: '8px 16px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ink-blue)', fontWeight: 'bold' }}>
+            <span>📚</span>
+            <span>Subject: {topic.subject || "General"}</span>
           </div>
-
-          {/* E. Attachments */}
-          <div className="details-card-premium">
-            <h3 className="heading-md section-title">📎 Attachments</h3>
-            <div className="attachment-view-placeholder">
-              <p className="caption">No files attached to this request.</p>
-            </div>
-          </div>
-
         </div>
 
-        {/* RIGHT COLUMN: Sidebar */}
-        <div className="details-sidebar">
-          
-          {/* B. Learner Card */}
-          <div className="details-card-premium learner-card">
-            <div className="learner-avatar">
-              {topic.creatorName?.charAt(0) || 'S'}
-            </div>
-            <div className="learner-info">
-              <h4 className="heading-md">{topic.creatorName}</h4>
-              <p className="caption">Learner</p>
-            </div>
-            <div className="learner-meta">
-              <p className="body">🎓 {topic.university || 'N/A'}</p>
-              <p className="body">📖 {topic.department || 'N/A'}</p>
-            </div>
-          </div>
-
-          {/* F. Mentor Action Card */}
-          <div className="details-card-premium action-card">
-            <h3 className="heading-md">Ready to help?</h3>
-            <p className="body">Share your knowledge and earn credits by mentoring this student.</p>
-            
-            <div className="action-button-wrapper">
-              {isCreator ? (
-                <button className="btn-disabled" disabled>You cannot mentor your own topic</button>
-              ) : isMatched ? (
-                <button className="btn-disabled" disabled>Mentor Already Selected</button>
-              ) : (
-                <button className="btn-action-premium" onClick={handleAccept} disabled={accepting}>
-                  {accepting ? 'Processing...' : '🚀 Become Mentor'}
-                </button>
-              )}
-            </div>
-          </div>
-
+        <div style={{ 
+          background: 'var(--surface-tint)', 
+          padding: '24px', 
+          borderRadius: 'var(--radius-md)', 
+          marginBottom: '32px',
+          boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.7), 0 4px 12px rgba(48, 39, 30, 0.03)'
+        }}>
+          <h3 className="heading-sm" style={{ color: 'var(--primary-dark)', marginBottom: '12px' }}>Description</h3>
+          <p className="body" style={{ margin: 0, whiteSpace: 'pre-wrap', color: 'var(--text-main)', lineHeight: '1.6' }}>
+            {topic.description || "No description provided."}
+          </p>
         </div>
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
+          <button 
+            onClick={() => navigate('/topics')} 
+            style={{ 
+              padding: '12px 24px', 
+              borderRadius: 'var(--radius-full)', 
+              border: 'var(--border-style)', 
+              background: 'transparent', 
+              color: 'var(--text-soft)',
+              fontWeight: '700',
+              cursor: 'pointer' 
+            }}
+          >
+            Back to Feed
+          </button>
+          
+          {!isCreator && topic.status === 'open' && (
+            <button 
+              onClick={handleAcceptTopic}
+              disabled={actionLoading}
+              style={{ 
+                background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: 'var(--radius-full)', 
+                padding: '12px 32px', 
+                fontWeight: '700', 
+                cursor: actionLoading ? 'not-allowed' : 'pointer',
+                boxShadow: 'var(--shadow-3d)'
+              }}
+            >
+              {actionLoading ? 'Creating Session...' : 'Accept & Help'}
+            </button>
+          )}
+        </div>
+
       </div>
     </div>
   );
