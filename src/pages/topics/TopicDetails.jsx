@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getTopicById, acceptTopic } from '../../services/topicService';
 import { createSession } from '../../services/sessionService';
+import './TopicDetails.css';
 
 const TopicDetails = () => {
   const { topicId } = useParams();
@@ -27,115 +28,164 @@ const TopicDetails = () => {
     if (topicId) fetchTopic();
   }, [topicId]);
 
-  const handleAcceptTopic = async () => {
+  const handleBecomeMentor = async () => {
+    if (!user) {
+      alert("You must be logged in to mentor a topic.");
+      return;
+    }
+
     try {
       setActionLoading(true);
-      
-      // 1. Topic accept korche ebang validate korche
       const topicData = await acceptTopic(topic.id, user.uid);
       
-      // 2. Automatically Session create korche
       const newSessionId = await createSession(
         topic.id, 
         topicData.createdBy, 
         user.uid             
       );
       
-      alert("Successfully matched! Session created.");
-      navigate(`/sessions/${newSessionId}`); 
+      navigate(`/sessions/${newSessionId}`);
     } catch (error) {
-      alert(error.message || "Something went wrong. Please try again.");
+      console.error("Mentor acceptance failed:", error);
+      alert(error.message || "Failed to accept topic.");
     } finally {
       setActionLoading(false);
     }
   };
 
   if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
-        <h3 className="heading-md" style={{ color: 'var(--text-soft)' }}>Loading topic...</h3>
-      </div>
-    );
+    return <div className="details-loading">Loading Topic Details...</div>;
   }
 
   if (!topic) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
-        <h3 className="heading-md" style={{ color: 'var(--ink-blue)' }}>Topic not found.</h3>
+      <div className="dashboard-page animate-fade-up">
+        <div className="card-3d empty-feed-card">
+          <h2 style={{ color: 'var(--ink-blue)', marginBottom: '8px' }}>Topic Not Found</h2>
+          <p style={{ color: 'var(--text-soft)', marginBottom: '24px' }}>This request may have been removed or the link is broken.</p>
+          <button onClick={() => navigate('/topics')} className="btn-become-mentor" style={{ width: 'auto' }}>
+            Back to Browse Topics
+          </button>
+        </div>
       </div>
     );
   }
 
-  const isCreator = user?.uid === topic.createdBy;
+  const title = topic.title || "Untitled Request";
+  const subject = topic.subject || topic.category || "General";
+  const status = (topic.status || "open").toLowerCase();
+  const description = typeof topic.description === 'string' ? topic.description : "No description provided.";
+  
+  const createdBy = topic.createdBy || topic.creatorId || topic.learnerId || null;
+  const creatorName = topic.creatorName || topic.learnerName || topic.userName || "Student";
+  const preferredTime = topic.preferredTime || topic.time || topic.schedule || "Flexible";
+  
+  const rawSkills = topic.skillsNeeded || topic.skills || topic.tags;
+  const skills = Array.isArray(rawSkills) ? rawSkills : [];
+  
+  const rawAttachments = topic.attachments;
+  const attachments = Array.isArray(rawAttachments) ? rawAttachments : [];
+
+  const isCreator = user?.uid === createdBy;
 
   return (
-    <div className="animate-fade-in" style={{ paddingBottom: '40px' }}>
-      <div className="dashboard-card-cafe" style={{ maxWidth: '800px', margin: '0 auto', background: 'var(--surface)', borderRadius: 'var(--radius-lg)', border: 'var(--border-style)', padding: 'var(--space-xl)', boxShadow: 'var(--shadow-soft)' }}>
-        
-        <h1 className="heading-xl" style={{ color: 'var(--ink-blue)', marginBottom: '16px' }}>
-          {topic.title || "Untitled Request"}
-        </h1>
-        
-        <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
-          <div className="focus-chip" style={{ background: 'var(--apricot-soft)', padding: '8px 16px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ink-blue)', fontWeight: 'bold' }}>
-            <span>📌</span>
-            <span>Status: {topic.status ? topic.status.toUpperCase() : 'OPEN'}</span>
-          </div>
-          <div className="focus-chip" style={{ background: 'var(--mint-soft)', padding: '8px 16px', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ink-blue)', fontWeight: 'bold' }}>
-            <span>📚</span>
-            <span>Subject: {topic.subject || "General"}</span>
-          </div>
+    <div className="dashboard-page animate-fade-up">
+      <button onClick={() => navigate('/topics')} className="btn-back-feed">
+        ← Back to Browse Topics
+      </button>
+
+      <div className="topic-details-container">
+        {/* Left Column */}
+        <div className="topic-main-column">
+          <section className="card-3d details-card">
+            <div className="details-header-row">
+              <span className="topic-subject">{subject}</span>
+              <span className={`topic-status-badge ${status}`}>
+                {status.toUpperCase()}
+              </span>
+            </div>
+
+            <h1 className="details-title">{title}</h1>
+
+            <div className="creator-meta-box">
+              <div className="creator-avatar-lg">👤</div>
+              <div>
+                <div className="meta-label">Requested by</div>
+                <div className="meta-value">{creatorName}</div>
+              </div>
+              <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+                <div className="meta-label">Preferred Time</div>
+                <div className="meta-value">🕒 {preferredTime}</div>
+              </div>
+            </div>
+
+            <div className="details-section">
+              <h3 className="section-subheading">Description</h3>
+              <p className="details-description">{description}</p>
+            </div>
+
+            {skills.length > 0 && (
+              <div className="details-section">
+                <h3 className="section-subheading">Skills Needed</h3>
+                <div className="topic-skills-row">
+                  {skills.map((skill, index) => (
+                    <span key={index} className="skill-chip-lg">{skill}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="details-section">
+              <h3 className="section-subheading">Attachments</h3>
+              {attachments.length > 0 ? (
+                <div className="attachment-view-placeholder">
+                  <span>📎 {attachments.length} attachment(s) available.</span>
+                </div>
+              ) : (
+                <div className="attachment-view-placeholder">
+                  <span>📎 No attachments provided.</span>
+                </div>
+              )}
+            </div>
+
+          </section>
         </div>
 
-        <div style={{ 
-          background: 'var(--surface-tint)', 
-          padding: '24px', 
-          borderRadius: 'var(--radius-md)', 
-          marginBottom: '32px',
-          boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.7), 0 4px 12px rgba(48, 39, 30, 0.03)'
-        }}>
-          <h3 className="heading-sm" style={{ color: 'var(--primary-dark)', marginBottom: '12px' }}>Description</h3>
-          <p className="body" style={{ margin: 0, whiteSpace: 'pre-wrap', color: 'var(--text-main)', lineHeight: '1.6' }}>
-            {topic.description || "No description provided."}
-          </p>
-        </div>
+        {/* Right Column: Mentor Action */}
+        <div className="topic-sidebar-column">
+          <section className="card-3d mentor-action-card">
+            <h3 className="mentor-card-title">Mentorship</h3>
+            <p className="mentor-card-desc">
+              Ready to help? Becoming a mentor creates a dedicated study session workspace for both of you.
+            </p>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
-          <button 
-            onClick={() => navigate('/topics')} 
-            style={{ 
-              padding: '12px 24px', 
-              borderRadius: 'var(--radius-full)', 
-              border: 'var(--border-style)', 
-              background: 'transparent', 
-              color: 'var(--text-soft)',
-              fontWeight: '700',
-              cursor: 'pointer' 
-            }}
-          >
-            Back to Feed
-          </button>
-          
-          {!isCreator && topic.status === 'open' && (
-            <button 
-              onClick={handleAcceptTopic}
-              disabled={actionLoading}
-              style={{ 
-                background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: 'var(--radius-full)', 
-                padding: '12px 32px', 
-                fontWeight: '700', 
-                cursor: actionLoading ? 'not-allowed' : 'pointer',
-                boxShadow: 'var(--shadow-3d)'
-              }}
-            >
-              {actionLoading ? 'Creating Session...' : 'Accept & Help'}
-            </button>
-          )}
+            {isCreator ? (
+              <div className="status-notice warning">
+                <span>⚠️</span> You cannot mentor your own topic.
+              </div>
+            ) : status === 'open' ? (
+              <button 
+                onClick={handleBecomeMentor} 
+                disabled={actionLoading}
+                className="btn-become-mentor"
+              >
+                {actionLoading ? "Setting up Session..." : "Become Mentor"}
+              </button>
+            ) : status === 'matched' ? (
+              <div className="status-notice info">
+                <span>🔒</span> Mentor already selected.
+              </div>
+            ) : status === 'completed' ? (
+              <div className="status-notice success">
+                <span>✅</span> Topic completed.
+              </div>
+            ) : (
+               <div className="status-notice info">
+                 <span>ℹ️</span> Status: {status.toUpperCase()}
+               </div>
+            )}
+          </section>
         </div>
-
       </div>
     </div>
   );

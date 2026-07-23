@@ -6,10 +6,10 @@ import './MainLayout.css';
 const MainLayout = () => {
   const { user, dbUser } = useAuth();
   
-  // Safe fallbacks so the app never crashes on missing data
   const displayName = dbUser?.displayName || user?.displayName || 'Student';
   const initial = displayName.charAt(0).toUpperCase();
 
+  // ROUTE BINDING FIXED HERE
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '🏠' },
     { path: '/topics', label: 'Browse Topics', icon: '🔍' },
@@ -17,7 +17,7 @@ const MainLayout = () => {
     { path: '/sessions', label: 'My Sessions', icon: '📚' },
     { path: '/notifications', label: 'Notifications', icon: '🔔' },
     { path: '/locker', label: 'Locker', icon: '💼' },
-    { path: '/system', label: 'Study System', icon: '🧩' },
+    { path: '/study-system', label: 'Study System', icon: '🧩' }, // Fixed path
     { path: '/leaderboard', label: 'Leaderboard', icon: '🏆' },
     { path: '/profile', label: 'Profile', icon: '👤' },
   ];
@@ -38,6 +38,7 @@ const MainLayout = () => {
             <NavLink 
               key={item.path} 
               to={item.path}
+              /* Active Nav State managed securely by React Router */
               className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
             >
               <span className="nav-icon">{item.icon}</span>
@@ -59,6 +60,7 @@ const MainLayout = () => {
       {/* Main Content Area */}
       <main className="main-content">
         <div className="content-max-width">
+          {/* Outlet safely renders the matched route (Dashboard, Topics, etc.) */}
           <Outlet />
         </div>
       </main>

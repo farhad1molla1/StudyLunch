@@ -1,123 +1,146 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createTopic } from '../../services/topicService';
 import { useAuth } from '../../hooks/useAuth';
-import toast from 'react-hot-toast';
+import { createTopic } from '../../services/topicService';
 import './CreateTopic.css';
 
 const CreateTopic = () => {
   const { user, dbUser } = useAuth();
   const navigate = useNavigate();
+  
+  const [formData, setFormData] = useState({
+    title: '',
+    subject: '',
+    description: '',
+    skillsNeeded: '',
+    preferredTime: ''
+  });
   const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
-    title: '', subject: '', description: '', skillsNeeded: '',
-    preferredTime: '', university: dbUser?.university || '',
-    department: dbUser?.department || '', year: dbUser?.year || ''
-  });
-
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.subject) return toast.error("Title and Subject are required");
-    
+    if (!user) return alert("You must be logged in.");
+
     setLoading(true);
     try {
+      const skillsArray = formData.skillsNeeded
+        ? formData.skillsNeeded.split(',').map(s => s.trim()).filter(Boolean)
+        : [];
+
       await createTopic({
-        ...formData,
+        title: formData.title,
+        subject: formData.subject,
+        description: formData.description,
+        skillsNeeded: skillsArray,
+        preferredTime: formData.preferredTime || 'Anytime',
+        // Auto-filling from Profile (Not asking the user manually)
+        university: dbUser?.university || '',
+        department: dbUser?.department || '',
+        academicYear: dbUser?.academicYear || '',
         createdBy: user.uid,
-        creatorName: dbUser?.name || user.email,
-        status: 'open',
-        createdAt: new Date().toISOString()
+        creatorName: dbUser?.displayName || user.displayName || 'Student',
+        creatorPhoto: user.photoURL || null
       });
-      toast.success("Learning Request Posted! 🎉");
+
       navigate('/topics');
     } catch (error) {
-      toast.error("Failed to post request.");
+      console.error("Error creating topic:", error);
+      alert("Failed to create topic request. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="create-topic-layout animate-fade-in">
-      
-      {/* A. Page Header */}
-      <header className="page-header">
-        <h1 className="heading-xl">Create a Learning Request</h1>
-        <p className="body subtitle">Tell others what you need help with. A mentor will join you soon!</p>
-      </header>
+    <div className="dashboard-page animate-fade-up">
+      <div className="create-topic-header">
+        <h1 className="dashboard-title">Create a Learning Request</h1>
+        <p className="create-subtitle">Tell others what you need help with.</p>
+      </div>
 
-      {/* B. Main Form Card */}
-      <form className="form-card-premium" onSubmit={handleSubmit}>
-        
-        {/* Group 1: Study Topic */}
-        <div className="form-section">
-          <h3 className="heading-md section-title"><span className="section-icon">📚</span> Study Topic</h3>
+      <section className="card-3d create-form-card">
+        <form onSubmit={handleSubmit} className="create-topic-form">
           <div className="form-group">
-            <label className="caption">Topic Title *</label>
-            <input type="text" name="title" className="premium-input" placeholder="e.g. Need help understanding React Hooks" value={formData.title} onChange={handleChange} required />
+            <label>Topic Title</label>
+            <input 
+              type="text" 
+              name="title" 
+              required 
+              placeholder="e.g., Understanding Binary Trees in Data Structures" 
+              value={formData.title} 
+              onChange={handleChange} 
+            />
           </div>
-          <div className="form-group">
-            <label className="caption">Subject / Course *</label>
-            <input type="text" name="subject" className="premium-input" placeholder="e.g. Web Development" value={formData.subject} onChange={handleChange} required />
-          </div>
-          <div className="form-group">
-            <label className="caption">Detailed Description</label>
-            <textarea name="description" className="premium-textarea" placeholder="Explain what you are stuck on..." rows="4" value={formData.description} onChange={handleChange}></textarea>
-          </div>
-        </div>
 
-        {/* Group 2: Learning Context */}
-        <div className="form-section">
-          <h3 className="heading-md section-title"><span className="section-icon">🎯</span> Learning Context</h3>
           <div className="form-row">
             <div className="form-group">
-              <label className="caption">Skills Needed</label>
-              <input type="text" name="skillsNeeded" className="premium-input" placeholder="e.g. React, JavaScript" value={formData.skillsNeeded} onChange={handleChange} />
+              <label>Subject</label>
+              <input 
+                type="text" 
+                name="subject" 
+                required 
+                placeholder="e.g., Computer Science" 
+                value={formData.subject} 
+                onChange={handleChange} 
+              />
             </div>
             <div className="form-group">
-              <label className="caption">Preferred Time</label>
-              <input type="text" name="preferredTime" className="premium-input" placeholder="e.g. Tomorrow 8 PM" value={formData.preferredTime} onChange={handleChange} />
+              <label>Preferred Time</label>
+              <input 
+                type="text" 
+                name="preferredTime" 
+                placeholder="e.g., Evenings (GMT+6)" 
+                value={formData.preferredTime} 
+                onChange={handleChange} 
+              />
             </div>
           </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label className="caption">University</label>
-              <input type="text" name="university" className="premium-input" value={formData.university} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-              <label className="caption">Department</label>
-              <input type="text" name="department" className="premium-input" value={formData.department} onChange={handleChange} />
+
+          <div className="form-group">
+            <label>Skills Needed (comma-separated)</label>
+            <input 
+              type="text" 
+              name="skillsNeeded" 
+              placeholder="e.g., Python, Recursion, Logic" 
+              value={formData.skillsNeeded} 
+              onChange={handleChange} 
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Description</label>
+            <textarea 
+              name="description" 
+              required 
+              rows="6"
+              placeholder="Provide context or details about what you need assistance with..." 
+              value={formData.description} 
+              onChange={handleChange} 
+            />
+          </div>
+
+          {/* Attachment Placeholder */}
+          <div className="form-group attachment-placeholder">
+            <div className="attachment-box">
+              <span className="attachment-icon">📎</span>
+              <p className="attachment-text">Attach Image or PDF (Coming Soon)</p>
             </div>
           </div>
-        </div>
 
-        {/* Group 3: Attachments Placeholder */}
-        <div className="form-section">
-          <h3 className="heading-md section-title"><span className="section-icon">📎</span> Attachments</h3>
-          <div className="attachment-placeholder">
-            <div className="upload-box">
-              <span className="upload-icon">🖼️</span>
-              <p className="body">Upload Image (Coming Soon)</p>
-            </div>
-            <div className="upload-box">
-              <span className="upload-icon">📄</span>
-              <p className="body">Upload PDF (Coming Soon)</p>
-            </div>
+          <div className="form-actions">
+            <button type="button" onClick={() => navigate('/topics')} className="btn-cancel">
+              Cancel
+            </button>
+            <button type="submit" disabled={loading} className="btn-submit">
+              {loading ? "Posting..." : "Post Request"}
+            </button>
           </div>
-        </div>
-
-        {/* C & D. Submit & Helper Message */}
-        <div className="form-footer">
-          <p className="helper-text caption">Your topic will appear on the public learning board.</p>
-          <button type="submit" className="btn-submit-premium animate-bounce-hover" disabled={loading}>
-            {loading ? 'Posting...' : 'Post Learning Request'}
-          </button>
-        </div>
-
-      </form>
+        </form>
+      </section>
     </div>
   );
 };
