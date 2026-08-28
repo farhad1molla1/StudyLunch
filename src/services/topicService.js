@@ -1,11 +1,10 @@
-import { collection, addDoc, doc, updateDoc, getDoc, getDocs, serverTimestamp, query } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, getDoc, getDocs, serverTimestamp, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase'; 
 
 export const createTopic = async (topicData) => {
   if (!topicData.title || !topicData.subject || !topicData.description || !topicData.createdBy) {
     throw new Error("Missing required topic fields.");
   }
-
   const docRef = await addDoc(collection(db, 'topics'), {
     title: topicData.title,
     subject: topicData.subject,
@@ -32,11 +31,13 @@ export const getAllTopics = async () => {
   try {
     const q = query(collection(db, 'topics'));
     const snapshot = await getDocs(q);
-    
-    return snapshot.docs.map(doc => ({ 
-      id: doc.id, 
-      ...doc.data() 
-    }));
+    const topics = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    topics.sort((a, b) => {
+      const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.createdAt || 0);
+      const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.createdAt || 0);
+      return timeB - timeA;
+    });
+    return topics;
   } catch (error) {
     console.error("Error in getAllTopics:", error);
     throw new Error("Could not load topics. Please try again.");
@@ -63,8 +64,13 @@ export const acceptTopic = async (topicId, mentorId) => {
   if (!topicSnap.exists()) throw new Error("Topic not found");
   const topicData = topicSnap.data();
   
-  const actualCreator = topicData.createdBy || topicData.creatorId || topicData.learnerId;
-  if (actualCreator === mentorId) {
+  const learnerId = topicData.createdBy || topicData.creatorId || topicData.learnerId;
+  
+  if (!learnerId) {
+    throw new Error("This old topic is missing learner information and cannot be accepted.");
+  }
+  
+  if (learnerId === mentorId) {
     throw new Error("You cannot mentor your own topic.");
   }
   
@@ -72,7 +78,7 @@ export const acceptTopic = async (topicId, mentorId) => {
     throw new Error("This topic is no longer available.");
   }
 
-  const updatedParticipants = Array.from(new Set([...(topicData.participants || [actualCreator]), mentorId]));
+  const updatedParticipants = Array.from(new Set([...(topicData.participants || [learnerId]), mentorId]));
 
   await updateDoc(topicRef, {
     status: 'matched',
@@ -81,7 +87,7 @@ export const acceptTopic = async (topicId, mentorId) => {
     updatedAt: serverTimestamp()
   });
 
-  return { id: topicSnap.id, ...topicData, createdBy: actualCreator };
+  return { id: topicSnap.id, ...topicData, learnerId, mentorId };
 };
 
 export const updateTopicStatus = async (topicId, status) => {
@@ -91,4 +97,21 @@ export const updateTopicStatus = async (topicId, status) => {
 
 export const completeTopic = async (topicId) => {
   await updateTopicStatus(topicId, 'completed');
+};
+
+export const subscribeToUserTopics = (uid, callback) => {
+  if (!uid) return () => {};
+  const q = query(collection(db, 'topics'), where('createdBy', '==', uid));
+  return onSnapshot(q, (snapshot) => {
+    const topics = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    topics.sort((a, b) => {
+      const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+      const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+      return timeB - timeA;
+    });
+    callback(topics);
+  }, (error) => {
+    console.error("Real-time topics fetch failed:", error);
+    callback([]);
+  });
 };

@@ -1,55 +1,50 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { subscribeToAuthChanges, login, signup, logout, googleLogin } from '../services/authService';
-import { getUser, updateLastActive } from '../services/userService';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { auth } from '../firebase/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
-export const AuthContext = createContext();
+// 1. Export AuthContext explicitly so named imports like { AuthContext } never fail
+export const AuthContext = createContext(null);
 
+// 2. Export useAuth hook directly from the provider file
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
+
+// 3. Export AuthProvider
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  const [dbUser, setDbUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = subscribeToAuthChanges(async (user) => {
-      try {
-        if (user) {
-          setCurrentUser(user);
-          // Safely attempt DB calls. If they fail, auth still works!
-          try {
-            await updateLastActive(user.uid);
-            const profile = await getUser(user.uid);
-            setDbUser(profile);
-          } catch (dbErr) {
-            console.error("Firestore user fetch failed, but Auth is okay:", dbErr);
-          }
-        } else {
-          setCurrentUser(null);
-          setDbUser(null);
-        }
-      } catch (err) {
-        console.error("Auth state error:", err);
-      } finally {
-        // ALWAYS set loading to false so the app renders
-        setLoading(false); 
-      }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setLoading(false);
     });
-
     return unsubscribe;
   }, []);
 
-  // NEVER return null or a blank screen. Always show a safe loader.
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-main, #F3E9DB)', color: 'var(--ink-blue, #2D3A6B)', fontFamily: 'sans-serif', fontWeight: 'bold' }}>
-        Booting StudyLunch...
-      </div>
-    );
-  }
+  const logout = () => signOut(auth);
 
-  // Passing both 'user' and 'currentUser' to support legacy hooks
+  // Memoized value supplying all necessary aliases to prevent destructuring errors
+  const value = useMemo(() => ({
+    currentUser,
+    user: currentUser, 
+    loading,
+    authLoading: loading, 
+    isAuthenticated: !!currentUser,
+    logout
+  }), [currentUser, loading]);
+
   return (
-    <AuthContext.Provider value={{ currentUser, user: currentUser, dbUser, loading, login, signup, logout, googleLogin }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+// 4. Default export fallback
+export default AuthContext;

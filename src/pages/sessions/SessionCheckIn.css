@@ -1,12 +1,33 @@
-.checkpoint-layout { display: flex; justify-content: center; align-items: center; min-height: 70vh; }
-.checkpoint-card { max-width: 600px; width: 100%; padding: var(--space-xxl); }
-.subtitle { margin-bottom: var(--space-xl); color: var(--color-text-secondary); }
-.session-info-pill { background: var(--color-bg); padding: var(--space-md); border-radius: var(--radius-full); text-align: center; margin-bottom: var(--space-lg); border: 1px solid rgba(139, 92, 246, 0.2); }
-.participants-status { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xl); background: var(--color-bg); padding: var(--space-lg); border-radius: var(--radius-lg); }
-.p-card { display: flex; flex-direction: column; align-items: center; gap: var(--space-sm); flex: 1; }
-.p-avatar { width: 64px; height: 64px; border-radius: var(--radius-full); background: var(--color-secondary); color: white; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: bold; box-shadow: var(--shadow-soft); }
-.p-avatar.mentor-bg { background: var(--color-accent); }
-.p-divider { font-size: 2rem; opacity: 0.5; }
-.status-badge { padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: bold; }
-.status-badge.success { background: rgba(167, 243, 208, 0.4); color: #065f46; }
-.status-badge.warning { background: rgba(255, 209, 102, 0.3); color: #b45309; }
+.checkin-loading { display: flex; justify-content: center; align-items: center; min-height: 50vh; color: var(--primary-dark); font-size: 1.2rem; font-weight: 700; }
+
+.checkin-card { padding: 32px; max-width: 800px; margin: 0 auto; width: 100%; border-radius: var(--radius-card); }
+.checkin-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; border-bottom: 1px solid var(--border-soft); padding-bottom: 20px; }
+.checkin-subtitle { color: var(--text-main); font-size: 1.05rem; margin-top: 6px; }
+
+.info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.info-box { padding: 16px; background: var(--surface-tint); border-radius: 12px; border: 1px solid var(--border-soft); }
+.info-label { font-size: 0.85rem; color: var(--text-soft); font-weight: 700; text-transform: uppercase; }
+.info-value { font-size: 1.1rem; color: var(--ink-blue); font-weight: 700; margin-top: 4px; }
+
+.info-box-wide { padding: 16px; background: var(--surface-cool); border-radius: 12px; border: 1px dashed var(--border-soft); }
+.info-value-wide { font-size: 1.05rem; color: var(--ink-blue); font-weight: 600; margin-top: 4px; word-break: break-all; }
+
+.participant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.participant-box { padding: 16px; border-radius: 12px; text-align: center; background: var(--surface-tint); border: 1px solid var(--border-soft); transition: all 0.3s ease; }
+.participant-box.checked { background: var(--mint-soft); border-color: #2C7A54; }
+.participant-role { font-weight: 800; font-size: 1.1rem; margin-bottom: 4px; color: var(--text-soft); }
+.participant-box.checked .participant-role { color: #2C7A54; }
+.participant-status { font-weight: 600; color: var(--text-soft); }
+.participant-box.checked .participant-status { color: #2C7A54; }
+
+.checkin-actions { margin-top: 32px; display: flex; flex-direction: column; align-items: center; }
+.checkin-status-block { width: 100%; padding: 16px; text-align: center; border-radius: var(--radius-pill); font-weight: 700; }
+.checkin-status-block.success { background: var(--mint-soft); color: #2C7A54; border: 1px solid #2C7A54; }
+.checkin-status-block.waiting { background: var(--surface-cool); color: var(--text-main); border: 1px dashed var(--border-soft); }
+
+@media (max-width: 768px) {
+  .checkin-header { flex-direction: column; gap: 16px; }
+  .checkin-header > div:last-child { text-align: left !important; }
+  .info-row { grid-template-columns: 1fr; gap: 16px; }
+  .checkin-card { padding: 24px 20px; border-radius: 24px; }
+}

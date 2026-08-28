@@ -1,54 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllTopics } from '../../services/topicService';
-import './TopicFeed.css'; // Leaving untouched as requested
+import { getSubjectColor } from '../../utils/subjectColors';
+import './TopicFeed.css';
 
 const TopicFeed = () => {
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // Added explicit error state
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchTopics = async () => {
+    const loadTopics = async () => {
       try {
         setLoading(true);
-        setError(null);
         const data = await getAllTopics();
-        
-        // Ensure data is strictly an array to prevent .map crashes
-        setTopics(Array.isArray(data) ? data : []);
+        setTopics(data);
       } catch (err) {
-        console.error("Error fetching topics:", err);
-        setError(err.message || "Could not load topics. Please try again.");
+        console.error(err);
+        setError("Failed to load topics. Please try again.");
       } finally {
         setLoading(false);
       }
     };
-    fetchTopics();
+    loadTopics();
   }, []);
 
   if (loading) {
-    return (
-      <div className="feed-loading-state">
-        Loading Learning Requests...
-      </div>
-    );
-  }
-
-  // Crash-Proof Error UI instead of White Screen
-  if (error) {
-    return (
-      <div className="dashboard-page animate-fade-up">
-        <div className="card-3d empty-feed-card" style={{ borderLeft: '4px solid #B87222' }}>
-          <h2 style={{ color: 'var(--ink-blue)', marginBottom: '8px' }}>Oops!</h2>
-          <p style={{ color: 'var(--text-soft)' }}>{error}</p>
-          <button onClick={() => window.location.reload()} className="btn-create-topic" style={{ marginTop: '16px' }}>
-            Retry
-          </button>
-        </div>
-      </div>
-    );
+    return <div className="feed-loading-state">Loading topics...</div>;
   }
 
   return (
@@ -56,71 +35,89 @@ const TopicFeed = () => {
       <div className="feed-top-bar">
         <div>
           <h1 className="dashboard-title">Browse Topics</h1>
-          <p className="feed-subtitle">Find a student to help today.</p>
+          <p className="feed-subtitle">Find peers to help or topics to learn together.</p>
         </div>
+        <button className="btn-create-topic" onClick={() => navigate('/topics/create')}>
+          + Create Topic
+        </button>
       </div>
 
-      {topics.length === 0 ? (
-        <div className="card-3d empty-feed-card">
+      {error && (
+        <div style={{ background: 'var(--apricot-soft)', color: '#B87222', padding: '16px', borderRadius: '12px', marginBottom: '24px' }}>
+          {error}
+        </div>
+      )}
+
+      {topics.length === 0 && !error ? (
+        <div className="empty-feed-card card-3d">
           <div className="empty-feed-icon">📚</div>
-          <h2 style={{ color: 'var(--ink-blue)', marginBottom: '8px', fontSize: '1.4rem' }}>No learning requests yet.</h2>
-          <p style={{ color: 'var(--text-soft)', marginBottom: '24px' }}>
-            Be the first one to ask for help.
-          </p>
-          <button onClick={() => navigate('/topics/create')} className="btn-create-topic">
-            Create Topic
-          </button>
+          <h3>No topics found</h3>
+          <p style={{ color: 'var(--text-soft)', marginTop: '8px' }}>Be the first to create a study topic!</p>
         </div>
       ) : (
         <div className="topics-grid">
-          {topics.map(topic => {
-            // CRASH-PROOFING: Safe extraction of every single variable before rendering
-            if (!topic || !topic.id) return null; 
-
-            const title = topic.title || "Untitled Request";
-            const subject = topic.subject || "General";
-            const status = topic.status || "open";
-            const creatorName = topic.creatorName || "Student";
-            const preferredTime = topic.preferredTime || "";
+          {topics.map((topic) => {
+            // Safe fallback data parsing
+            const subject = topic.subject || 'General';
+            const status = topic.status || 'open';
+            const creatorName = topic.creatorName || 'Student';
+            const preferredTime = topic.preferredTime || 'Flexible';
+            const skillsNeeded = Array.isArray(topic.skillsNeeded) ? topic.skillsNeeded : [];
             
-            // Safe description formatting
-            const rawDesc = typeof topic.description === 'string' ? topic.description : "No description provided.";
-            const previewDesc = rawDesc.length > 110 ? `${rawDesc.substring(0, 110)}...` : rawDesc;
-            
-            // Safe array extraction
-            const skills = Array.isArray(topic.skillsNeeded) ? topic.skillsNeeded : [];
+            // Get consistent UI colors based on subject
+            const colors = getSubjectColor(subject);
 
             return (
-              <div key={topic.id} className="card-3d topic-card">
+              <div 
+                key={topic.id} 
+                className="topic-card"
+                style={{ borderLeft: `4px solid ${colors.accent}` }}
+              >
                 <div className="topic-card-header">
-                  <span className="topic-subject">{subject}</span>
+                  <span 
+                    className="topic-subject" 
+                    style={{ 
+                      backgroundColor: colors.bg, 
+                      color: colors.text, 
+                      border: `1px solid ${colors.border}` 
+                    }}
+                  >
+                    {subject}
+                  </span>
                   <span className={`topic-status-badge ${status}`}>
                     {status.toUpperCase()}
                   </span>
                 </div>
-
-                <h3 className="topic-title">{title}</h3>
                 
-                <p className="topic-preview">{previewDesc}</p>
+                <h3 className="topic-title">{topic.title || 'Untitled Topic'}</h3>
+                <p className="topic-preview">
+                  {topic.description 
+                    ? topic.description.length > 90 
+                      ? `${topic.description.substring(0, 90)}...` 
+                      : topic.description
+                    : 'No description provided.'}
+                </p>
 
-                {skills.length > 0 && (
+                {skillsNeeded.length > 0 && (
                   <div className="topic-skills-row">
-                    {skills.slice(0, 3).map((skill, idx) => (
+                    {skillsNeeded.slice(0, 3).map((skill, idx) => (
                       <span key={idx} className="skill-chip">{skill}</span>
                     ))}
+                    {skillsNeeded.length > 3 && (
+                      <span className="skill-chip" style={{ background: 'transparent' }}>
+                        +{skillsNeeded.length - 3} more
+                      </span>
+                    )}
                   </div>
                 )}
 
                 <div className="topic-card-footer">
                   <div className="creator-info">
-                    <span className="creator-avatar">👤</span>
                     <span className="creator-name">{creatorName}</span>
-                    {preferredTime && (
-                      <span className="topic-time"> • 🕒 {preferredTime}</span>
-                    )}
+                    <span className="topic-time">🕒 {preferredTime}</span>
                   </div>
                   <button 
-                    className="btn-view-details" 
+                    className="btn-view-details"
                     onClick={() => navigate(`/topics/${topic.id}`)}
                   >
                     View Details

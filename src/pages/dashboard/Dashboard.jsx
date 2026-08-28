@@ -1,56 +1,88 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { studyQuotes } from '../../data/quotes';
-import { getAllTopics } from '../../services/topicService';
-import { getUserSessions } from '../../services/sessionService';
+import { subscribeToUserTopics } from '../../services/topicService';
+import { subscribeToUserSessions } from '../../services/sessionService';
+import { subscribeToUserNotifications } from '../../services/notificationService';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const { user, dbUser } = useAuth();
-  const [quote, setQuote] = useState(studyQuotes[0]);
+  const navigate = useNavigate();
   
-  const [counts, setCounts] = useState({ sessions: 0, waiting: 0, alerts: 0 });
+  const [quote, setQuote] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  // Real-time arrays
+  const [userTopics, setUserTopics] = useState([]);
+  const [userSessions, setUserSessions] = useState([]);
+  const [userAlerts, setUserAlerts] = useState([]);
 
   useEffect(() => {
-    const randomQuote = studyQuotes[Math.floor(Math.random() * studyQuotes.length)];
-    setQuote(randomQuote);
+    setQuote(studyQuotes[Math.floor(Math.random() * studyQuotes.length)]);
   }, []);
 
+  // Real-time Dashboard Listeners
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      if (!user) return;
-      try {
-        let activeSessionsCount = 0;
-        let waitingTopicsCount = 0;
+    if (!user) return;
+    setLoading(true);
 
-        try {
-          const allTopics = await getAllTopics();
-          waitingTopicsCount = allTopics.filter(t => t.createdBy === user.uid && t.status === 'open').length;
-        } catch (e) { console.error("Safe Fetch Error (Topics):", e); }
+    const unsubTopics = subscribeToUserTopics(user.uid, (data) => {
+      setUserTopics(data);
+      setLoading(false);
+    });
 
-        try {
-          const allSessions = await getUserSessions(user.uid);
-          activeSessionsCount = allSessions.filter(s => s.status !== 'completed' && s.status !== 'cancelled').length;
-        } catch (e) { console.error("Safe Fetch Error (Sessions):", e); }
+    const unsubSessions = subscribeToUserSessions(user.uid, (data) => {
+      setUserSessions(data);
+      setLoading(false);
+    });
 
-        setCounts({
-          sessions: activeSessionsCount,
-          waiting: waitingTopicsCount,
-          alerts: 0 
-        });
-      } catch (error) {
-        console.error("Dashboard metric fetch failed:", error);
-      }
+    const unsubNotifs = subscribeToUserNotifications(user.uid, (data) => {
+      setUserAlerts(data);
+    });
+
+    return () => {
+      unsubTopics();
+      unsubSessions();
+      unsubNotifs();
     };
-
-    fetchDashboardData();
   }, [user]);
 
+  // Safely calculate all metrics
+  const activeSessionStatuses = ['scheduled', 'ready', 'in_progress', 'waiting_end_confirmation'];
+  const activeSessions = userSessions.filter(s => activeSessionStatuses.includes(s.status));
+  
+  const counts = {
+    sessions: activeSessions.length,
+    waiting: userTopics.filter(t => t.status === 'open').length,
+    alerts: userAlerts.length
+  };
+
+  const stats = {
+    asked: userTopics.length,
+    helped: userSessions.filter(s => s.mentorId === user?.uid && s.status === 'completed').length,
+    completed: userSessions.filter(s => s.status === 'completed').length,
+    trust: dbUser?.trust || dbUser?.trustScore || 0
+  };
+
+  // Determine the most urgent upcoming session
+  const getUpcomingSession = () => {
+    if (activeSessions.length === 0) return null;
+    
+    // Priority formatting
+    const priority = { 'in_progress': 1, 'ready': 2, 'scheduled': 3, 'waiting_end_confirmation': 4 };
+    const sorted = [...activeSessions].sort((a, b) => (priority[a.status] || 9) - (priority[b.status] || 9));
+    
+    return sorted[0];
+  };
+
+  const upcomingSession = getUpcomingSession();
   const displayName = dbUser?.displayName || user?.displayName || 'Student';
-  const askedCount = dbUser?.asked || 0;
-  const helpedCount = dbUser?.helped || 0;
-  const completedCount = dbUser?.completed || 0;
-  const trustScore = dbUser?.trust || 0;
+
+  if (loading && userTopics.length === 0 && userSessions.length === 0) {
+    return <div className="dashboard-loading">Preparing your Café...</div>;
+  }
 
   return (
     <div className="dashboard-page animate-fade-up">
@@ -61,16 +93,14 @@ const Dashboard = () => {
           <h2>Welcome back, {displayName}!</h2>
           <p>Let’s make learning feel a little easier.</p>
         </div>
-        <div className="hero-icons animate-float">
-          🎒
-        </div>
+        <div className="hero-icons animate-float">🎒</div>
       </section>
 
       <div className="dashboard-top-grid">
         <section className="card-3d focus-section">
           <h3 className="section-label">🎯 Today's Focus</h3>
           <div className="focus-chips">
-            <div className="chip sessions">
+            <div className="chip sessions" onClick={() => navigate('/sessions')} style={{cursor: 'pointer'}}>
               <strong>{counts.sessions}</strong> Sessions
             </div>
             <div className="chip waiting">
@@ -84,44 +114,73 @@ const Dashboard = () => {
 
         <section className="card-3d quote-section">
           <h3 className="section-label">💡 Thought for Today</h3>
-          <div className="quote-text">"{quote.text}"</div>
-          <div className="quote-author">— {quote.author}</div>
+          <div className="quote-text">"{quote?.text || "Learning feels easier when someone walks beside you."}"</div>
+          <div className="quote-author">— {quote?.author || "StudyLunch"}</div>
         </section>
       </div>
 
       <div className="dashboard-main-grid">
-        <section className="card-3d upcoming-card pressable">
+        <section className="card-3d upcoming-wrapper">
           <h3 className="section-label">📅 Upcoming Session</h3>
-          <div className="empty-state-card">
-            <div className="css-cat-mascot">
-              <div className="css-cat-ear ear-left"></div>
-              <div className="css-cat-ear ear-right"></div>
-              <div className="css-cat-face">^ ω ^</div>
+          
+          {upcomingSession ? (
+            <div className="upcoming-active-card pressable">
+              <div className="upcoming-header">
+                <span className="upcoming-role">
+                  {upcomingSession.mentorId === user?.uid ? "Mentor" : "Learner"}
+                </span>
+                <span className={`upcoming-status ${upcomingSession.status}`}>
+                  {upcomingSession.status.replace('_', ' ').toUpperCase()}
+                </span>
+              </div>
+              
+              <h4 className="upcoming-title">{upcomingSession.topicTitle || "Learning Session"}</h4>
+              
+              <div className="upcoming-meta">
+                <span className="upcoming-time">
+                  🕒 {upcomingSession.scheduledTime || "Schedule pending"}
+                </span>
+              </div>
+              
+              <button 
+                className="btn-enter-workspace" 
+                onClick={() => navigate(`/sessions/${upcomingSession.id}`)}
+              >
+                Enter Workspace →
+              </button>
             </div>
-            <p className="empty-text">Your schedule is clear.</p>
-            <p style={{ color: 'var(--text-soft)', fontSize: '0.95rem' }}>
-              Start a learning request when you're ready.
-            </p>
-          </div>
+          ) : (
+            <div className="empty-state-card">
+              <div className="css-cat-mascot">
+                <div className="css-cat-ear ear-left"></div>
+                <div className="css-cat-ear ear-right"></div>
+                <div className="css-cat-face">^ ω ^</div>
+              </div>
+              <p className="empty-text">Your schedule is clear.</p>
+              <p style={{ color: 'var(--text-soft)', fontSize: '0.95rem' }}>
+                Start a learning request when you're ready.
+              </p>
+            </div>
+          )}
         </section>
 
         <section className="card-3d stats-card">
           <h3 className="section-label">📊 Learning Stats</h3>
           <div className="stats-grid">
             <div className="stat-box stat-asked">
-              <div className="stat-value">{askedCount}</div>
+              <div className="stat-value">{stats.asked}</div>
               <div className="stat-label">Asked</div>
             </div>
             <div className="stat-box stat-helped">
-              <div className="stat-value">{helpedCount}</div>
+              <div className="stat-value">{stats.helped}</div>
               <div className="stat-label">Helped</div>
             </div>
             <div className="stat-box stat-completed">
-              <div className="stat-value">{completedCount}</div>
+              <div className="stat-value">{stats.completed}</div>
               <div className="stat-label">Completed</div>
             </div>
             <div className="stat-box stat-trust">
-              <div className="stat-value">{trustScore}</div>
+              <div className="stat-value">{stats.trust}</div>
               <div className="stat-label">Trust</div>
             </div>
           </div>

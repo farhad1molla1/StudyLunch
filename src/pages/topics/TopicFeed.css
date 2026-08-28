@@ -28,6 +28,7 @@
   flex-direction: column;
   align-items: center;
   background-color: var(--surface-tint);
+  border-radius: var(--radius-card);
 }
 
 .empty-feed-icon {
@@ -44,6 +45,11 @@
   font-weight: 700;
   cursor: pointer;
   box-shadow: var(--shadow-3d);
+  transition: transform 0.2s;
+}
+
+.btn-create-topic:hover {
+  transform: translateY(-2px);
 }
 
 .topics-grid {
@@ -57,6 +63,7 @@
   flex-direction: column;
   background-color: var(--surface);
   transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: var(--radius-card);
 }
 
 .topic-card:hover {
@@ -72,21 +79,19 @@
 }
 
 .topic-subject {
-  background-color: var(--primary-soft);
-  color: var(--primary-dark);
   padding: 6px 14px;
   border-radius: var(--radius-pill);
   font-size: 0.8rem;
   font-weight: 700;
+  display: inline-block;
 }
 
-/* Status Badge - FIXED: No longer looks clickable */
 .topic-status-badge {
   padding: 6px 12px;
   border-radius: var(--radius-pill);
   font-size: 0.75rem;
   font-weight: 800;
-  cursor: default; 
+  cursor: default;
   user-select: none;
 }
 
@@ -95,9 +100,20 @@
   box-shadow: none;
 }
 
-.topic-status-badge.open { background-color: var(--apricot-soft); color: #B87222; }
-.topic-status-badge.matched { background-color: var(--mint-soft); color: #2C7A54; }
-.topic-status-badge.completed { background-color: var(--ink-blue-soft); color: var(--ink-blue); }
+.topic-status-badge.open {
+  background-color: var(--apricot-soft);
+  color: #B87222;
+}
+
+.topic-status-badge.matched {
+  background-color: var(--mint-soft);
+  color: #2C7A54;
+}
+
+.topic-status-badge.completed {
+  background-color: var(--ink-blue-soft);
+  color: var(--ink-blue);
+}
 
 .topic-title {
   color: var(--ink-blue);
@@ -167,4 +183,89 @@
   background-color: var(--mint-soft);
   border-color: var(--mint);
   color: var(--primary-dark);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: -1px;
+  }
+  
+  .feed-subtitle {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+  
+  .feed-top-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .btn-create-topic {
+    width: 100%;
+    text-align: center;
+    padding: 14px;
+    font-size: 16px;
+  }
+  
+  .topics-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .topic-card {
+    padding: 22px;
+    border-radius: 26px;
+  }
+  
+  .topic-card-header {
+    margin-bottom: 12px;
+  }
+  
+  .topic-status-badge, .topic-subject {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+  
+  .topic-title {
+    font-size: 24px;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  
+  .topic-preview {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+  
+  .topic-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding-top: 16px;
+  }
+  
+  .creator-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 14px;
+  }
+  
+  .topic-time {
+    margin-left: 0;
+    opacity: 0.8;
+  }
+  
+  .btn-view-details {
+    width: 100%;
+    text-align: center;
+    padding: 14px;
+    font-size: 15px;
+  }
 }

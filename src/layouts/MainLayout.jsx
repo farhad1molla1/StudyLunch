@@ -1,69 +1,89 @@
 import React from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './MainLayout.css';
 
-const MainLayout = () => {
-  const { user, dbUser } = useAuth();
-  
-  const displayName = dbUser?.displayName || user?.displayName || 'Student';
-  const initial = displayName.charAt(0).toUpperCase();
+const MainLayout = ({ children }) => {
+  const { logout, currentUser, user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // ROUTE BINDING FIXED HERE
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (err) {
+      console.error("Failed to log out", err);
+    }
+  };
+
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '🏠' },
-    { path: '/topics', label: 'Browse Topics', icon: '🔍' },
-    { path: '/topics/create', label: 'Create Topic', icon: '✏️' },
-    { path: '/sessions', label: 'My Sessions', icon: '📚' },
-    { path: '/notifications', label: 'Notifications', icon: '🔔' },
-    { path: '/locker', label: 'Locker', icon: '💼' },
-    { path: '/study-system', label: 'Study System', icon: '🧩' }, // Fixed path
-    { path: '/leaderboard', label: 'Leaderboard', icon: '🏆' },
-    { path: '/profile', label: 'Profile', icon: '👤' },
+    { label: 'Dashboard', path: '/dashboard', icon: '🏠' },
+    { label: 'Browse Topics', path: '/topics', icon: '🔍' },
+    { label: 'My Sessions', path: '/sessions', icon: '🎒' },
+    { label: 'Study Locker', path: '/locker', icon: '💼' },
+    { label: 'Leaderboard', path: '/leaderboard', icon: '🏆' },
+    { label: 'Profile', path: '/profile', icon: '👤' },
   ];
 
   return (
-    <div className="app-shell">
-      {/* Sidebar */}
-      <aside className="sidebar">
-        <div className="sidebar-header">
-          <h1 className="sidebar-logo-title">
-            <span style={{ fontSize: '1.8rem' }}>🍱</span> StudyLunch
-          </h1>
-          <p className="sidebar-logo-subtitle">Learn Together</p>
-        </div>
-
-        <nav className="sidebar-nav">
-          {navItems.map((item) => (
-            <NavLink 
-              key={item.path} 
-              to={item.path}
-              /* Active Nav State managed securely by React Router */
-              className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              <span>{item.label}</span>
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* Bottom Profile / Streak Card */}
-        <div className="sidebar-bottom-card">
-          <div className="avatar-placeholder">{initial}</div>
-          <div className="user-info">
-            <span className="user-name">{displayName}</span>
-            <span className="user-streak">🔥 6-Day Streak</span>
+    <div className="layout-container">
+      {/* Sidebar Navigation */}
+      <nav className="sidebar">
+        <div className="brand-header" onClick={() => navigate('/dashboard')} style={{ cursor: 'pointer' }}>
+          {/* Using requested asset path safely */}
+          <div className="brand-logo-container">
+            <img 
+              src="/assets/Study-lunch-icon-deliver (1).jpg" 
+              alt="StudyLunch Icon" 
+              className="brand-icon"
+              onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
+            />
           </div>
+          <div className="brand-text">StudyLunch</div>
         </div>
-      </aside>
+
+        <ul className="nav-list">
+          {navItems.map((item) => (
+            <li key={item.path}>
+              <button 
+                className={`nav-btn ${location.pathname.startsWith(item.path) ? 'active' : ''}`}
+                onClick={() => navigate(item.path)}
+              >
+                <span className="nav-icon">{item.icon}</span>
+                {item.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        <div className="sidebar-footer">
+          <button className="nav-btn logout-btn" onClick={handleLogout}>
+            <span className="nav-icon">🚪</span> Logout
+          </button>
+        </div>
+      </nav>
 
       {/* Main Content Area */}
-      <main className="main-content">
-        <div className="content-max-width">
-          {/* Outlet safely renders the matched route (Dashboard, Topics, etc.) */}
-          <Outlet />
-        </div>
-      </main>
+      <div className="main-content">
+        <header className="top-header">
+           <div className="header-greeting">
+              <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--sl-ink)' }}>
+                 Learn Together. Appreciate Together.
+              </span>
+           </div>
+           <div className="header-profile" onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
+              <div className="avatar">
+                 {currentUser?.email ? currentUser.email.charAt(0).toUpperCase() : 'S'}
+              </div>
+           </div>
+        </header>
+
+        <main className="content-scroll-area">
+          {/* CRITICAL: Must render children OR Outlet to prevent blank screen */}
+          {children || <Outlet />}
+        </main>
+      </div>
     </div>
   );
 };

@@ -1,56 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { getUser } from '../../services/userService';
+import React from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
-const ProtectedRoute = ({ children, requireProfile = true }) => {
-  const { user, loading, isProfileComplete } = useAuth();
-  const [localLoading, setLocalLoading] = useState(true);
-  const [localProfileComplete, setLocalProfileComplete] = useState(isProfileComplete);
+export default function ProtectedRoute({ children }) {
+  const location = useLocation();
+  const auth = useAuth();
 
-  // Fallback Check: Resolves stale context if the user just completed the Setup Wizard 
-  // and is navigating to dashboard without a hard refresh.
-  useEffect(() => {
-    const doubleCheckProfile = async () => {
-      if (user && requireProfile && !isProfileComplete) {
-        const res = await getUser(user.uid);
-        if (res.success && res.data?.university) {
-          setLocalProfileComplete(true);
-        }
-      }
-      setLocalLoading(false);
-    };
+  const currentUser = auth?.currentUser || auth?.user || null;
+  const loading = auth?.loading || auth?.authLoading || false;
 
-    if (!loading) {
-      doubleCheckProfile();
-    }
-  }, [user, loading, requireProfile, isProfileComplete]);
-
-  if (loading || localLoading) {
+  if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '18px', fontWeight: '500' }}>Loading...</p>
+      <div style={{ 
+        minHeight: "100vh", 
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        background: "var(--sl-bg, #f7f1e7)", 
+        color: "var(--sl-primary-dark, #084b45)", 
+        fontWeight: 800, 
+        fontSize: "1.2rem" 
+      }}>
+        Loading StudyLunch...
       </div>
     );
   }
 
-  // Not logged in -> Kick to Login
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  if (!currentUser) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  // Logged in but profile incomplete -> Kick to Setup Wizard
-  if (requireProfile && !localProfileComplete) {
-    return <Navigate to="/profile/setup" replace />;
-  }
-
-  // Logged in, profile complete, but trying to access Setup -> Kick to Dashboard
-  if (!requireProfile && localProfileComplete) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  // All clear -> Render the protected page
-  return children;
-};
-
-export default ProtectedRoute;
+  return children ? children : <Outlet />;
+}
