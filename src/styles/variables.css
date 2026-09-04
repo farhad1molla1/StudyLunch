@@ -4,27 +4,28 @@
    ========================================= */
 
 :root {
-  /* Core StudyLunch Branding */
-  --sl-bg: #f7f1e7;
-  --sl-bg-soft: #fffaf1;
-  --sl-surface: #ffffff;
-  --sl-surface-warm: #fff7e8;
-
-  --sl-primary: #0f6b62;
-  --sl-primary-dark: #084b45;
+  /* Core StudyLunch Branding (Tuned to Official Logo & Icon) */
+  --sl-primary: #0f5753;
+  --sl-primary-dark: #063f3c;
   --sl-primary-soft: #dff3ef;
 
-  --sl-gold: #f6b83f;
-  --sl-gold-soft: #fff0c7;
+  --sl-gold: #f2aa1f;
+  --sl-gold-soft: #fff1c9;
 
-  --sl-ink: #182b3a;
+  --sl-tagline: #009b55;
+
+  --sl-bg: #f8f3ea;
+  --sl-bg-soft: #fffaf1;
+  --sl-surface: #ffffff;
+  --sl-surface-warm: #fff8ec;
+
+  --sl-ink: #142536;
   --sl-text: #24323f;
-  --sl-muted: #6f7c83;
+  --sl-muted: #6d7a80;
 
   --sl-border: #eadfcf;
-
-  --sl-shadow: 0 18px 45px rgba(15, 75, 69, 0.12);
-  --sl-shadow-soft: 0 10px 28px rgba(24, 43, 58, 0.08);
+  --sl-shadow: 0 18px 45px rgba(15, 87, 83, 0.12);
+  --sl-shadow-soft: 0 10px 28px rgba(20, 37, 54, 0.08);
 
   --sl-radius-lg: 28px;
   --sl-radius-md: 20px;
@@ -63,10 +64,10 @@
 
   --shadow-soft: var(--sl-shadow-soft);
   --shadow-3d: inset 0 2px 4px rgba(255, 255, 255, 0.6),
-               0 7px 0 rgba(15, 107, 98, 0.12), 
-               0 16px 34px rgba(24, 43, 58, 0.1);
+               0 7px 0 rgba(15, 87, 83, 0.12), 
+               0 16px 34px rgba(20, 37, 54, 0.1);
   --shadow-hover: inset 0 2px 4px rgba(255, 255, 255, 0.8),
-                  0 18px 38px rgba(24, 43, 58, 0.14);
+                  0 18px 38px rgba(20, 37, 54, 0.14);
 
   --color-primary: var(--sl-primary);
   --color-surface: var(--sl-surface);
@@ -97,6 +98,37 @@
   --transition-fast: 150ms;
   --transition-base: 250ms;
   --ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1.05);
+}
+
+/* Future-ready Dark Theme Base (Aurora Borealis / Starry Night) */
+[data-theme="dark"] {
+  --sl-bg: #071417;
+  --sl-bg-soft: #0b1f24;
+  --sl-surface: rgba(12, 31, 36, 0.92);
+  --sl-surface-warm: rgba(18, 40, 42, 0.92);
+
+  --sl-primary: #4fd1c5;
+  --sl-primary-dark: #1b8f86;
+  --sl-primary-soft: rgba(79, 209, 197, 0.14);
+
+  --sl-gold: #f6b83f;
+  --sl-gold-soft: rgba(246, 184, 63, 0.16);
+
+  --sl-tagline: #31d07d;
+
+  --sl-ink: #edfdfb;
+  --sl-text: #eaf7f5;
+  --sl-muted: #a7c2c0;
+
+  --sl-border: rgba(180, 230, 220, 0.18);
+  --sl-shadow: 0 22px 55px rgba(0, 0, 0, 0.38);
+  --sl-shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.28);
+
+  --bg-main: var(--sl-bg);
+  --surface: var(--sl-surface);
+  --primary: var(--sl-primary);
+  --text-main: var(--sl-text);
+  --text-soft: var(--sl-muted);
 }
 
 /* Base Typography & Background */
