@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 import { auth } from '../firebase/firebase';
 import { getUser, updateLastActive } from '../services/userService';
@@ -24,9 +24,10 @@ export const AuthProvider = ({ children }) => {
         try {
           const profileRes = await getUser(firebaseUser.uid);
           
-          if (profileRes && profileRes.success && profileRes.data) {
-            setDbUser(profileRes.data);
-            setIsProfileComplete(!!profileRes.data.university);
+          if (profileRes && (profileRes.success || profileRes.data)) {
+            const data = profileRes.data || profileRes;
+            setDbUser(data);
+            setIsProfileComplete(!!data.university);
             
             // Update last active on session restore/login
             await updateLastActive(firebaseUser.uid);
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }) => {
             setIsProfileComplete(false);
           }
         } catch (error) {
-          console.error("Failed to synchronize session.");
+          console.error("Failed to synchronize session.", error);
         }
       } else {
         setUser(null);
@@ -56,17 +57,20 @@ export const AuthProvider = ({ children }) => {
       setDbUser(null);
       setIsProfileComplete(false);
     } catch (error) {
-      console.error("Logout failed.");
+      console.error("Logout failed.", error);
     } finally {
       setLoading(false);
     }
   };
 
   const value = {
+    currentUser: user,
     user,
+    loading,
+    authLoading: loading,
+    isAuthenticated: !!user,
     dbUser,
     isProfileComplete,
-    loading,
     login: authLogin,
     signup: authSignup,
     googleLogin: authGoogleLogin,
@@ -80,3 +84,13 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export default AuthContext;

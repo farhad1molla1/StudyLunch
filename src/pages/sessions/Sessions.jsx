@@ -1,7 +1,3 @@
-import React from 'react';
+import MySessions from "./MySessions";
 
-function Sessions() {
-  return <div>Sessions Page</div>;
-}
-
-export default Sessions;
+export default MySessions;

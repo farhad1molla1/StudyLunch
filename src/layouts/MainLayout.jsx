@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 import './MainLayout.css';
 
-const MainLayout = () => {
-  const { user, dbUser } = useAuth();
+const MainLayout = ({ children }) => {
+  const auth = useAuth() || {};
+  const { user, currentUser, dbUser } = auth;
+  const activeUser = currentUser || user;
+
   const location = useLocation();
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [iconError, setIconError] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -27,7 +31,7 @@ const MainLayout = () => {
     { path: '/topics', label: 'Browse Topics', icon: '📚' },
     { path: '/topics/create', label: 'Create Topic', icon: '➕' },
     { path: '/sessions', label: 'My Sessions', icon: '🤝' },
-    { path: '/notifications', label: 'Notifications', icon: '🔔', badge: 3 },
+    { path: '/notifications', label: 'Notifications', icon: '🔔' },
     { path: '/locker', label: 'Locker', icon: '🎒' },
     { path: '/study-system', label: 'Study System', icon: '🍱' },
     { path: '/leaderboard', label: 'Leaderboard', icon: '🏆' },
@@ -35,24 +39,35 @@ const MainLayout = () => {
   ];
 
   const getPageTitle = () => {
-    const currentItem = navItems.find(item => location.pathname.includes(item.path) && item.path !== '/');
+    const currentItem = navItems.find(item => location.pathname.startsWith(item.path) && item.path !== '/');
     return currentItem ? currentItem.label : 'StudyLunch';
   };
 
-  const photoUrl = user?.photoURL || dbUser?.photoURL;
-  const userName = dbUser?.name || 'Student';
+  const photoUrl = activeUser?.photoURL || dbUser?.photoURL;
+  const userName = dbUser?.name || activeUser?.displayName || 'Student';
 
   return (
     <div className="layout-root animate-fade-in">
       {/* ================= LEFT SIDEBAR (Warm Digital Café) ================= */}
       <aside className={`sidebar-cafe ${isCollapsed ? 'collapsed' : ''}`}>
         
-        <div className="sidebar-header">
-          <div className="logo-badge-cafe">🍱</div>
+        <div className="sidebar-header" onClick={() => navigate('/dashboard')} style={{ cursor: 'pointer' }}>
+          <div className="logo-badge-cafe" style={{ overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {!iconError ? (
+              <img 
+                src="/assets/studylunch-icon.jpg" 
+                alt="StudyLunch" 
+                onError={() => setIconError(true)}
+                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "10px" }}
+              />
+            ) : (
+              <span>🍱</span>
+            )}
+          </div>
           {!isCollapsed && (
             <div className="logo-text-wrapper">
               <h2 className="logo-title heading-md">StudyLunch</h2>
-              <span className="logo-tagline caption">Learn Together</span>
+              <span className="logo-tagline caption" style={{ fontSize: "0.68rem" }}>Learn Together. Appreciate Together.</span>
             </div>
           )}
         </div>
@@ -83,13 +98,13 @@ const MainLayout = () => {
               {photoUrl ? (
                 <img src={photoUrl} alt={userName} referrerPolicy="no-referrer" />
               ) : (
-                <div className="user-fallback">{userName.charAt(0)}</div>
+                <div className="user-fallback">{userName.charAt(0).toUpperCase()}</div>
               )}
             </div>
             {!isCollapsed && (
               <div className="user-info-small">
                 <span className="user-name body">{userName}</span>
-                <span className="user-streak caption">🔥 6-Day Streak</span>
+                <span className="user-streak caption">StudyLunch Member</span>
               </div>
             )}
           </div>
@@ -107,7 +122,7 @@ const MainLayout = () => {
         </header>
         <main className="content-area">
           <div className="content-container">
-            <Outlet />
+            {children || <Outlet />}
           </div>
         </main>
       </div>
