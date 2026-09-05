@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../../contexts/AuthContext';
@@ -12,24 +12,43 @@ import {
 import './Signup.css';
 
 // Friendly Firebase error message translator
-const formatAuthError = (err) => {
+const formatAuthError = (err, isGoogle = false) => {
   if (!err) return '';
+  const code = err.code || '';
   const message = err.message || '';
-  if (message.includes('auth/email-already-in-use')) {
+
+  // Google & popup errors
+  if (code === 'auth/popup-closed-by-user' || message.includes('auth/popup-closed-by-user')) {
+    return 'Google sign-in was cancelled.';
+  }
+  if (code === 'auth/popup-blocked' || message.includes('auth/popup-blocked')) {
+    return 'Popup was blocked. Please allow popups and try again.';
+  }
+  if (code === 'auth/unauthorized-domain' || message.includes('auth/unauthorized-domain')) {
+    return 'This domain is not authorized for Google sign-in.';
+  }
+  if (code === 'auth/cancelled-popup-request' || message.includes('auth/cancelled-popup-request')) {
+    return 'A sign-in request is already in progress. Please wait a moment.';
+  }
+  if (code === 'auth/network-request-failed' || message.includes('auth/network-request-failed')) {
+    return 'Network problem. Please try again.';
+  }
+
+  // Email / Password errors
+  if (code === 'auth/email-already-in-use' || message.includes('auth/email-already-in-use')) {
     return 'This email is already in use. Please log in or use another email.';
   }
-  if (message.includes('auth/weak-password')) {
+  if (code === 'auth/weak-password' || message.includes('auth/weak-password')) {
     return 'Password is too weak. Please use at least 8 characters with uppercase, lowercase, and numbers.';
   }
-  if (message.includes('auth/invalid-email')) {
+  if (code === 'auth/invalid-email' || message.includes('auth/invalid-email')) {
     return 'The provided email address is invalid. Please double check.';
   }
-  if (message.includes('auth/popup-closed-by-user')) {
-    return 'Google sign-up was canceled before completing.';
+
+  if (isGoogle) {
+    return 'Google sign-in failed. Please try again.';
   }
-  if (message.includes('auth/network-request-failed')) {
-    return 'Network issue. Please check your internet connection.';
-  }
+
   return (
     message
       .replace(/^Firebase:\s*/i, '')
@@ -43,6 +62,10 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const isGoogleProcessing = useRef(false);
+  const isSubmitting = useRef(false);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [iconError, setIconError] = useState(false);
@@ -71,6 +94,7 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    if (loading || googleLoading || isSubmitting.current) return;
 
     // Field-level validations
     const nameErr = validateName(formData.name);
@@ -90,6 +114,7 @@ const Signup = () => {
     }
 
     try {
+      isSubmitting.current = true;
       setLoading(true);
       setAuthError('');
 
@@ -107,44 +132,60 @@ const Signup = () => {
       }
 
       toast.success('🎉 Welcome to StudyLunch!');
-      navigate('/profile/setup');
+      navigate('/dashboard');
     } catch (err) {
-      const friendlyMsg = formatAuthError(err);
+      console.error('error.code:', err?.code);
+      console.error('error.message:', err?.message);
+      console.error('full error object:', err);
+
+      const friendlyMsg = formatAuthError(err, false);
       setAuthError(friendlyMsg);
       toast.error(friendlyMsg);
     } finally {
+      isSubmitting.current = false;
       setLoading(false);
     }
   };
 
   const handleGoogleSignup = async () => {
-    try {
-      setLoading(true);
-      setAuthError('');
+    if (isGoogleProcessing.current || googleLoading || loading) {
+      return;
+    }
+    isGoogleProcessing.current = true;
+    setGoogleLoading(true);
+    setAuthError('');
 
+    try {
       const credential = await googleLogin();
       const uid = credential?.user?.uid || credential?.uid;
       const email = credential?.user?.email || credential?.email || '';
       const name = credential?.user?.displayName || credential?.name || 'StudyLunch User';
       const photoURL = credential?.user?.photoURL || credential?.photoURL || '';
 
-      const profileRes = await getUser(uid);
-      toast.success('🎉 Welcome to StudyLunch!');
-
-      if (!profileRes || !profileRes.success || !profileRes.data) {
-        await createUser(uid, name, email, photoURL);
-        navigate('/profile/setup');
-      } else if (!profileRes.data.university) {
-        navigate('/profile/setup');
-      } else {
-        navigate('/dashboard');
+      if (uid) {
+        try {
+          const profileRes = await getUser(uid);
+          if (!profileRes || !profileRes.success || !profileRes.data) {
+            await createUser(uid, name, email, photoURL);
+          }
+        } catch (dbErr) {
+          console.warn('Initial user profile creation note:', dbErr);
+        }
       }
+
+      toast.success('🎉 Welcome to StudyLunch!');
+      navigate('/dashboard');
     } catch (err) {
-      const friendlyMsg = formatAuthError(err);
+      console.error('error.code:', err?.code);
+      console.error('error.message:', err?.message);
+      console.error('full error object:', err);
+
+      const friendlyMsg = formatAuthError(err, true);
       setAuthError(friendlyMsg);
       toast.error(friendlyMsg);
     } finally {
-      setLoading(false);
+      isGoogleProcessing.current = false;
+      setGoogleLoading(false);
     }
   };
 
@@ -313,7 +354,7 @@ const Signup = () => {
           <button
             type="submit"
             className="btn-auth-primary"
-            disabled={loading}
+            disabled={loading || googleLoading}
           >
             {loading ? (
               <>
@@ -338,15 +379,27 @@ const Signup = () => {
             type="button"
             className="btn-auth-google"
             onClick={handleGoogleSignup}
-            disabled={loading}
+            disabled={loading || googleLoading}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
-              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-            </svg>
-            <span>Continue with Google</span>
+            {googleLoading ? (
+              <>
+                <svg className="auth-spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="12" cy="12" r="10" strokeOpacity="0.25"></circle>
+                  <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round"></path>
+                </svg>
+                <span>Connecting to Google...</span>
+              </>
+            ) : (
+              <>
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+                <span>Continue with Google</span>
+              </>
+            )}
           </button>
         </form>
 

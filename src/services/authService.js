@@ -1,17 +1,18 @@
 import { 
-  getAuth, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut,
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
-  sendPasswordResetEmail // Added this for resetPassword
+  sendPasswordResetEmail
 } from 'firebase/auth';
-import { app } from '../firebase/firebase'; 
+import { auth } from '../firebase/firebase'; 
 
-export const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
 
 // Registration
 export const registerUser = async (email, password) => {
@@ -33,7 +34,7 @@ export const googleLogin = async () => {
   return userCredential.user;
 };
 
-// Password Reset (THIS WAS MISSING AND CAUSED THE CRASH)
+// Password Reset
 export const resetPassword = async (email) => {
   await sendPasswordResetEmail(auth, email);
 };
@@ -49,3 +50,5 @@ export const subscribeToAuthChanges = (callback) => {
   return onAuthStateChanged(auth, callback);
 };
 export const observeAuthState = subscribeToAuthChanges; // Fallback alias
+
+export { auth };
