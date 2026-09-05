@@ -4,56 +4,54 @@
    ========================================= */
 
 :root {
-  /* Core StudyLunch Branding (Tuned to Official Logo & Icon) */
-  --sl-bg: #F6EBDD;
-  --sl-bg-soft: #FFF6E8;
-  --sl-surface: #FFFDF7;
+  /* Core StudyLunch Branding (Digital Technology Inspired) */
+  --sl-bg: #F4F7F9;
+  --sl-bg-soft: #ECF1F5;
+  --sl-surface: #FFFFFF;
   --sl-surface-raised: #FFFFFF;
 
-  --sl-primary: #0D5A55;
-  --sl-primary-dark: #063E3A;
-  --sl-primary-deep: #052F2D;
-  --sl-primary-soft: #CDEDE6;
+  --sl-primary: #0B5A55;
+  --sl-primary-dark: #06403C;
+  --sl-primary-deep: #032A27;
+  --sl-primary-teal: #0D9488;
+  --sl-primary-soft: #E6F7F5;
 
-  --sl-gold: #F3AA1D;
-  --sl-gold-dark: #B87506;
-  --sl-gold-soft: #FFE8A8;
+  --sl-electric: #4F46E5;
+  --sl-electric-soft: #EEF2FF;
 
-  --sl-green: #039B58;
-  --sl-green-soft: #CFF4E0;
+  --sl-cyan: #0891B2;
+  --sl-cyan-soft: #E0F2FE;
 
-  --sl-mint: #9FEBCB;
-  --sl-mint-soft: #DDF9EC;
+  --sl-mint: #059669;
+  --sl-mint-soft: #ECFDF5;
 
-  --sl-sky: #9BDDFC;
-  --sl-sky-soft: #DDF4FF;
+  --sl-lavender: #6366F1;
+  --sl-lavender-soft: #F5F3FF;
 
-  --sl-lavender: #C8C0FF;
-  --sl-lavender-soft: #E9E5FF;
+  --sl-gold: #D97706;
+  --sl-gold-dark: #92400E;
+  --sl-gold-soft: #FEF3C7;
 
-  --sl-peach: #FFB18E;
-  --sl-peach-soft: #FFE3D6;
+  --sl-coral: #E11D48;
+  --sl-coral-soft: #FFE4E6;
 
-  --sl-yellow: #FFD66B;
-  --sl-yellow-soft: #FFF0BC;
+  --sl-ink: #0F2027;
+  --sl-text: #1E3A42;
+  --sl-muted: #5A747D;
 
-  --sl-coral: #FF7E68;
-  --sl-coral-soft: #FFDCD4;
+  --sl-border: #E1E8EC;
+  --sl-border-subtle: #EDF2F5;
 
-  --sl-ink: #102838;
-  --sl-text: #243640;
-  --sl-muted: #66777F;
-
-  --sl-border: #E2CFB8;
-
-  --sl-shadow-soft: 0 12px 26px rgba(16, 40, 56, 0.10);
-  --sl-shadow-3d: 0 10px 0 rgba(6, 62, 58, 0.12), 0 18px 34px rgba(16, 40, 56, 0.14);
-  --sl-shadow-press: 0 4px 0 rgba(6, 62, 58, 0.14), 0 8px 18px rgba(16, 40, 56, 0.10);
+  --sl-shadow-soft: 0 8px 24px rgba(15, 32, 39, 0.06);
+  --sl-shadow-card: inset 0 1.5px 0 #FFFFFF, 0 4px 16px rgba(15, 32, 39, 0.05), 0 1px 2px rgba(15, 32, 39, 0.03);
+  --sl-shadow-tile: inset 0 1.5px 0 rgba(255, 255, 255, 0.95), 0 3.5px 12px rgba(15, 32, 39, 0.06), 0 2px 0 rgba(11, 90, 85, 0.08);
+  --sl-shadow-active-pill: inset 0 1.5px 0 rgba(255, 255, 255, 0.4), 0 6px 18px rgba(11, 90, 85, 0.28), 0 2px 0 var(--sl-primary-dark);
+  --sl-shadow-press: inset 0 2px 4px rgba(15, 32, 39, 0.12), 0 1px 2px rgba(15, 32, 39, 0.04);
   --sl-inset-highlight: inset 0 1.5px 0 rgba(255, 255, 255, 0.9);
 
-  --sl-radius-lg: 28px;
-  --sl-radius-md: 20px;
-  --sl-radius-sm: 14px;
+  --sl-radius-lg: 24px;
+  --sl-radius-md: 18px;
+  --sl-radius-sm: 12px;
 
   /* Aliases & Unified Tokens */
   --bg-main: var(--sl-bg);
