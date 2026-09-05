@@ -69,7 +69,7 @@ const ScheduleEmptyState = ({ title, message, onAction, onSecondary }) => (
         </button>
       )}
       <button type="button" className="btn-tactile-secondary" onClick={onSecondary}>
-        View all sessions
+        View sessions
       </button>
     </div>
   </div>
@@ -286,12 +286,10 @@ const Dashboard = () => {
         </div>
 
         <div className="quote-card-tactile">
-          <h2 className="overview-title">Thought for Today</h2>
+          <h2 className="overview-title">Thought for today</h2>
           <div className="quote-content">
             <p className="quote-text">
-              <span className="quote-inline-mark">“</span>
-              {dailyQuote.text || "A small explanation can become someone’s turning point."}
-              <span className="quote-inline-mark">”</span>
+              {dailyQuote.text || "A small explanation can become someone's turning point."}
             </p>
             <span className="quote-attribution">— {dailyQuote.author || "StudyLunch"}</span>
           </div>
@@ -381,14 +379,14 @@ const Dashboard = () => {
                 className="btn-view-all-sessions" 
                 onClick={() => navigate('/sessions')}
               >
-                View all sessions →
+                View sessions
               </button>
             </div>
             
             {upcomingSessions.length === 0 ? (
               <ScheduleEmptyState 
                 title="Your schedule is clear." 
-                message="Create a request or join a topic when you're ready." 
+                message="Create a request or browse topics when you're ready." 
                 onAction={() => navigate('/topics/create')}
                 onSecondary={() => navigate('/sessions')}
               />
@@ -421,7 +419,7 @@ const Dashboard = () => {
                     )}
                   </p>
                 </div>
-                <button type="button" className="btn-tactile-primary btn-room">Enter Room</button>
+                <button type="button" className="btn-tactile-primary btn-room">Enter room</button>
               </div>
             )}
           </section>

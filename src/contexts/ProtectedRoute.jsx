@@ -3,13 +3,13 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-  const auth = useAuth();
+  const { user, currentUser, authLoading } = useAuth() || {};
   const location = useLocation();
 
-  const loading = auth ? (auth.loading || auth.authLoading) : true;
-  const currentUser = auth ? (auth.currentUser || auth.user) : null;
+  const activeUser = currentUser || user;
 
-  if (loading) {
+  // Only show loader during the initial auth resolution
+  if (authLoading) {
     return (
       <div style={{
         display: "flex",
@@ -19,22 +19,26 @@ const ProtectedRoute = ({ children }) => {
         padding: "40px 20px"
       }}>
         <div style={{
-          padding: "16px 28px",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          padding: "14px 24px",
           background: "var(--sl-surface, #ffffff)",
-          borderRadius: "var(--sl-radius-md, 20px)",
-          border: "1px solid var(--sl-border, #eadfcf)",
-          boxShadow: "var(--sl-shadow-soft, 0 10px 28px rgba(24, 43, 58, 0.08))",
-          color: "var(--sl-primary, #0f6b62)",
+          borderRadius: "var(--sl-radius-md, 18px)",
+          border: "1px solid var(--sl-border, #E1E8EC)",
+          boxShadow: "var(--sl-shadow-soft, 0 8px 24px rgba(15, 32, 39, 0.06))",
+          color: "var(--sl-primary, #0B5A55)",
           fontWeight: "600",
-          fontSize: "1rem"
+          fontSize: "0.95rem"
         }}>
-          Loading StudyLunch...
+          <span>🍱</span>
+          <span>Opening StudyLunch...</span>
         </div>
       </div>
     );
   }
 
-  if (!currentUser) {
+  if (!activeUser) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

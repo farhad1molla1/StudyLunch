@@ -35,6 +35,8 @@
   align-items: center;
   padding: 0 20px;
   gap: 12px;
+  text-decoration: none;
+  color: inherit;
 }
 
 .logo-badge-cafe {
@@ -76,6 +78,8 @@
   color: var(--text-soft);
   gap: 12px;
   text-align: left;
+  text-decoration: none;
+  user-select: none;
 }
 
 .nav-pill-cafe:hover {
@@ -132,6 +136,8 @@
   box-shadow: inset 0 2px 4px rgba(255,255,255,0.9);
   cursor: pointer;
   transition: transform var(--transition-fast);
+  text-decoration: none;
+  color: inherit;
 }
 .user-card-apricot:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
 
@@ -357,6 +363,7 @@
   color: var(--text-soft);
   cursor: pointer;
   transition: color 0.15s ease;
+  text-decoration: none;
 }
 
 .mob-nav-item:hover,

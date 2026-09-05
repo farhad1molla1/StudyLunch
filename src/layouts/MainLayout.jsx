@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 import './MainLayout.css';
@@ -83,10 +83,11 @@ const MainLayout = ({ children }) => {
       {/* ================= LEFT SIDEBAR (Warm Digital Café) ================= */}
       <aside className={`sidebar-cafe ${isCollapsed ? 'collapsed' : ''} ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
         
-        <div 
+        <Link 
+          to="/dashboard"
           className="sidebar-header" 
-          onClick={() => { navigate('/dashboard'); setIsMobileMenuOpen(false); }} 
-          style={{ cursor: 'pointer' }}
+          onClick={() => setIsMobileMenuOpen(false)} 
+          style={{ cursor: 'pointer', textDecoration: 'none' }}
         >
           <div className="logo-badge-cafe" style={{ overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
             {!iconError ? (
@@ -111,44 +112,38 @@ const MainLayout = ({ children }) => {
             <button 
               type="button"
               className="mobile-sidebar-close" 
-              onClick={(e) => { e.stopPropagation(); setIsMobileMenuOpen(false); }}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsMobileMenuOpen(false); }}
               aria-label="Close menu"
             >
               ✕
             </button>
           )}
-        </div>
+        </Link>
 
         <nav className="sidebar-nav">
-          {navItems.map((item) => {
-            const isActive = location.pathname.startsWith(item.path) && (item.path !== '/' || location.pathname === '/');
-            return (
-              <button 
-                key={item.path} 
-                type="button"
-                className={`nav-pill-cafe ${isActive ? 'active' : ''}`}
-                onClick={() => {
-                  navigate(item.path);
-                  setIsMobileMenuOpen(false);
-                }}
-                title={isCollapsed && !isMobileMenuOpen ? item.label : ''}
-              >
-                <span className="nav-icon">{item.icon}</span>
-                {(!isCollapsed || isMobileMenuOpen) && <span className="nav-label body">{item.label}</span>}
-                
-                {item.badge && (!isCollapsed || isMobileMenuOpen) && <span className="nav-badge">{item.badge}</span>}
-                {item.badge && isCollapsed && !isMobileMenuOpen && <span className="nav-badge-dot"></span>}
-              </button>
-            );
-          })}
+          {navItems.map((item) => (
+            <NavLink 
+              key={item.path} 
+              to={item.path}
+              className={({ isActive }) => `nav-pill-cafe ${isActive ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+              title={isCollapsed && !isMobileMenuOpen ? item.label : ''}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              {(!isCollapsed || isMobileMenuOpen) && <span className="nav-label body">{item.label}</span>}
+              
+              {item.badge && (!isCollapsed || isMobileMenuOpen) && <span className="nav-badge">{item.badge}</span>}
+              {item.badge && isCollapsed && !isMobileMenuOpen && <span className="nav-badge-dot"></span>}
+            </NavLink>
+          ))}
         </nav>
 
         <div className="sidebar-footer">
-          <div 
+          <Link 
+            to="/profile"
             className="user-card-apricot" 
-            onClick={() => { navigate('/profile'); setIsMobileMenuOpen(false); }}
-            role="button"
-            tabIndex={0}
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ textDecoration: 'none' }}
             title="View Profile"
           >
             <div className="user-avatar-small">
@@ -164,7 +159,7 @@ const MainLayout = ({ children }) => {
                 <span className="user-streak caption">StudyLunch Member</span>
               </div>
             )}
-          </div>
+          </Link>
 
           <button 
             type="button"
@@ -239,20 +234,17 @@ const MainLayout = ({ children }) => {
 
       {/* ================= MOBILE BOTTOM NAV ================= */}
       <nav className="mobile-bottom-nav">
-        {navItems.slice(0, 4).map((item) => {
-          const isActive = location.pathname.startsWith(item.path) && (item.path !== '/' || location.pathname === '/');
-          return (
-            <button 
-              key={item.path} 
-              type="button"
-              className={`mob-nav-item ${isActive ? 'active' : ''}`}
-              onClick={() => navigate(item.path)}
-            >
-              <span className="mob-nav-icon">{item.icon}</span>
-              <span className="mob-nav-label caption">{item.label}</span>
-            </button>
-          );
-        })}
+        {navItems.slice(0, 4).map((item) => (
+          <NavLink 
+            key={item.path} 
+            to={item.path}
+            className={({ isActive }) => `mob-nav-item ${isActive ? 'active' : ''}`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <span className="mob-nav-icon">{item.icon}</span>
+            <span className="mob-nav-label caption">{item.label}</span>
+          </NavLink>
+        ))}
         <button 
           type="button"
           className={`mob-nav-item ${isMobileMenuOpen ? 'active' : ''}`}

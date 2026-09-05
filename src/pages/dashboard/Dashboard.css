@@ -18,7 +18,7 @@
    ========================================= */
 .dashboard-hero-tactile {
   background: linear-gradient(135deg, #FFFFFF 0%, #F2FAF9 50%, #E6F5F3 100%);
-  border: 1.5px solid rgba(13, 148, 136, 0.22);
+  border: 1.5px solid rgba(13, 148, 136, 0.2);
   border-radius: 22px;
   padding: 20px 24px;
   display: flex;
@@ -40,7 +40,7 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(13, 148, 136, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.1) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -54,9 +54,9 @@
 .hero-title {
   font-family: var(--font-primary);
   font-size: 1.6rem;
-  font-weight: 800;
+  font-weight: 750;
   color: var(--sl-ink);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   margin: 0;
   line-height: 1.25;
 }
@@ -70,26 +70,26 @@
   line-height: 1.45;
 }
 
+/* Floating Brand Mark (Clean, Light, Natural - Not trapped in heavy casing) */
 .hero-brand-mark {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 15px;
-  background: #ffffff;
-  border: 2px solid var(--sl-primary);
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: transparent;
+  border: none;
   flex-shrink: 0;
   overflow: hidden;
-  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
-              0 3.5px 12px rgba(11, 90, 85, 0.22),
-              0 2px 0 var(--sl-primary-dark);
+  box-shadow: 0 4px 14px rgba(11, 90, 85, 0.08);
   z-index: 1;
 }
 
 .hero-brand-img {
   width: 100%;
   height: 100%;
+  border-radius: 14px;
   object-fit: cover;
 }
 
@@ -104,7 +104,7 @@
 
 .overview-title {
   font-family: var(--font-primary);
-  font-size: 1rem;
+  font-size: 1.02rem;
   font-weight: 700;
   color: var(--sl-ink);
   margin: 0 0 10px 0;
@@ -247,7 +247,7 @@
 .focus-num {
   font-family: var(--font-primary);
   font-size: 1.15rem;
-  font-weight: 800;
+  font-weight: 750;
   line-height: 1.1;
 }
 
@@ -259,14 +259,14 @@
   white-space: nowrap;
 }
 
-/* Thought for Today: Soft Lavender-Teal Digital Calm */
+/* Thought for today: Clean, Natural, Student-Friendly (Consistent with StudyLunch typography) */
 .quote-card-tactile {
-  background: linear-gradient(135deg, #FFFFFF 0%, #FAF8FF 50%, #F1EEFD 100%);
-  border: 1.5px solid rgba(99, 102, 241, 0.18);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F9FBFC 100%);
+  border: 1.5px solid var(--sl-border);
   border-radius: 20px;
   padding: 16px 18px;
   box-shadow: var(--sl-inset-highlight),
-              0 4px 16px rgba(99, 102, 241, 0.04);
+              var(--sl-shadow-card);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -275,35 +275,29 @@
 .quote-content {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
   justify-content: center;
   flex: 1;
 }
 
 .quote-text {
-  font-family: var(--font-secondary);
-  font-size: 0.92rem;
-  font-style: italic;
-  line-height: 1.48;
-  color: var(--sl-text);
+  font-family: inherit;
+  font-size: 15.5px;
+  font-style: normal;
+  line-height: 1.6;
+  color: var(--sl-ink);
   margin: 0;
   font-weight: 500;
-}
-
-.quote-inline-mark {
-  font-family: serif;
-  font-size: 1.25rem;
-  color: #6366F1;
-  font-weight: 700;
-  margin: 0 2px;
+  letter-spacing: -0.005em;
 }
 
 .quote-attribution {
-  font-family: var(--font-secondary);
-  font-size: 0.82rem;
+  font-family: inherit;
+  font-size: 13.5px;
   color: var(--sl-primary);
-  font-weight: 700;
+  font-weight: 600;
   align-self: flex-end;
+  letter-spacing: 0.01em;
 }
 
 /* Badge Color Themes (Clean Tech Accents) */
@@ -321,13 +315,13 @@
 
 .badge-coral {
   background: var(--sl-electric-soft);
-  color: var(--sl-electric);
+  color: #3B49DF;
   border: 1px solid #C7D2FE;
 }
 
 .badge-lavender {
   background: var(--sl-lavender-soft);
-  color: #7C3AED;
+  color: #6366F1;
   border: 1px solid #DDD6FE;
 }
 
@@ -361,7 +355,7 @@
 .section-heading {
   font-family: var(--font-primary);
   font-size: 1.04rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--sl-ink);
   letter-spacing: -0.01em;
   margin: 0;
@@ -389,41 +383,41 @@
   min-height: 120px;
 }
 
-/* Tile 1: Create Request (Indigo / Electric Blue Aura) */
+/* Tile 1: Create Request (Controlled Indigo Aura) */
 .action-tile-peach {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F5F6FF 50%, #EDEEFD 100%);
-  border: 1.5px solid #D5D8FC;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F6F8FE 50%, #EEF2FD 100%);
+  border: 1.5px solid #D5DCF8;
   box-shadow: inset 0 1.5px 0 #FFFFFF,
-              0 4px 14px rgba(79, 70, 229, 0.08),
-              0 2px 0 rgba(79, 70, 229, 0.16);
+              0 4px 14px rgba(59, 73, 223, 0.07),
+              0 2px 0 rgba(59, 73, 223, 0.12);
 }
 .action-tile-peach:hover {
   transform: translateY(-2px);
-  border-color: #A5B4FC;
+  border-color: #BAC7F8;
   box-shadow: inset 0 1.5px 0 #FFFFFF,
-              0 8px 20px rgba(79, 70, 229, 0.14),
-              0 3px 0 rgba(79, 70, 229, 0.22);
+              0 8px 20px rgba(59, 73, 223, 0.12),
+              0 3px 0 rgba(59, 73, 223, 0.18);
 }
 .action-tile-peach:active {
   transform: translateY(2px);
-  box-shadow: inset 0 2px 4px rgba(79, 70, 229, 0.15),
-              0 1px 0 rgba(79, 70, 229, 0.1);
+  box-shadow: inset 0 2px 4px rgba(59, 73, 223, 0.14),
+              0 1px 0 rgba(59, 73, 223, 0.08);
 }
 
 /* Tile 2: Browse Topics (Digital Teal / Mint Aura) */
 .action-tile-mint {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF9 50%, #E3F8F2 100%);
-  border: 1.5px solid #B8EDE1;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F1FBF8 50%, #E6F8F3 100%);
+  border: 1.5px solid #B8ECE0;
   box-shadow: inset 0 1.5px 0 #FFFFFF,
               0 4px 14px rgba(11, 90, 85, 0.08),
-              0 2px 0 rgba(11, 90, 85, 0.18);
+              0 2px 0 rgba(11, 90, 85, 0.16);
 }
 .action-tile-mint:hover {
   transform: translateY(-2px);
   border-color: #5EEAD4;
   box-shadow: inset 0 1.5px 0 #FFFFFF,
               0 8px 20px rgba(11, 90, 85, 0.14),
-              0 3px 0 rgba(11, 90, 85, 0.24);
+              0 3px 0 rgba(11, 90, 85, 0.22);
 }
 .action-tile-mint:active {
   transform: translateY(2px);
@@ -431,20 +425,20 @@
               0 1px 0 rgba(11, 90, 85, 0.1);
 }
 
-/* Tile 3: Verified Help (Cyber Violet Aura - Planned) */
+/* Tile 3: Verified Help (Soft Violet / Planned State) */
 .action-tile-lavender {
-  background: linear-gradient(135deg, #FFFFFF 0%, #FAF7FE 50%, #F3EDFD 100%);
-  border: 1.5px solid #E2D9FC;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAF8FD 50%, #F4F1FA 100%);
+  border: 1.5px solid #E3DFEE;
   box-shadow: inset 0 1.5px 0 #FFFFFF,
-              0 4px 12px rgba(99, 102, 241, 0.06),
-              0 1.5px 0 rgba(99, 102, 241, 0.1);
+              0 4px 12px rgba(99, 102, 241, 0.05),
+              0 1.5px 0 rgba(99, 102, 241, 0.08);
   cursor: default;
 }
 .action-tile-lavender:hover {
   border-color: #DDD6FE;
   box-shadow: inset 0 1.5px 0 #FFFFFF,
-              0 6px 16px rgba(99, 102, 241, 0.1),
-              0 2px 0 rgba(99, 102, 241, 0.14);
+              0 6px 16px rgba(99, 102, 241, 0.08),
+              0 2px 0 rgba(99, 102, 241, 0.12);
 }
 .action-tile-lavender:active {
   transform: none;
@@ -466,23 +460,23 @@
   justify-content: center;
   font-size: 19px;
   background: #FFFFFF;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 2px 6px rgba(15, 32, 39, 0.06);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 2px 6px rgba(15, 32, 39, 0.05);
   flex-shrink: 0;
 }
 
 .tile-mini-tag {
   font-family: var(--font-primary);
   font-size: 0.72rem;
-  font-weight: 800;
+  font-weight: 600;
   padding: 3px 9px;
   border-radius: 9999px;
   letter-spacing: 0.01em;
 }
 
 .tag-coral {
-  background: var(--sl-electric);
+  background: #3B49DF;
   color: #FFFFFF;
-  box-shadow: 0 1.5px 0 #3730A3;
+  box-shadow: 0 1.5px 0 #2A36B1;
 }
 
 .tag-mint {
@@ -506,7 +500,7 @@
 .tile-title {
   font-family: var(--font-primary);
   font-size: 1.02rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--sl-ink);
   margin: 0;
   line-height: 1.25;
@@ -564,7 +558,7 @@
 .card-counter-badge {
   font-family: var(--font-secondary);
   font-size: 0.74rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--sl-primary);
   background: var(--sl-primary-soft);
   padding: 3px 9px;
@@ -572,14 +566,14 @@
   border: 1px solid #BCE5DF;
 }
 
-/* View All Sessions Text Button */
+/* View Sessions Text Button (Clean, No Exaggerated Arrows) */
 .btn-view-all-sessions {
   background: transparent;
   border: none;
   color: var(--sl-primary);
   font-family: var(--font-primary);
   font-size: 0.84rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -592,7 +586,7 @@
 .btn-view-all-sessions:hover {
   background: var(--sl-primary-soft);
   color: var(--sl-primary-dark);
-  transform: translateX(2px);
+  transform: translateX(1px);
 }
 
 /* Tactile Empty State with Mascot Cat (Warm, Friendly, Clean) */
@@ -631,6 +625,7 @@
   margin: 0 0 14px 0;
   max-width: 270px;
   line-height: 1.45;
+  font-weight: 500;
 }
 
 .empty-action-group {
@@ -650,7 +645,7 @@
   padding: 10px 20px;
   font-family: var(--font-primary);
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.35),
               0 5px 16px rgba(11, 90, 85, 0.28),
@@ -682,7 +677,7 @@
   padding: 10px 18px;
   font-family: var(--font-primary);
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   box-shadow: inset 0 1.5px 0 #FFFFFF,
               0 2.5px 8px rgba(11, 90, 85, 0.08),
@@ -755,14 +750,14 @@
 .session-day {
   font-family: var(--font-primary);
   font-size: 1.25rem;
-  font-weight: 800;
+  font-weight: 750;
   line-height: 1;
 }
 
 .session-month {
   font-family: var(--font-secondary);
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   margin-top: 2px;
 }
@@ -792,6 +787,7 @@
   align-items: center;
   gap: 4px;
   flex-wrap: wrap;
+  font-weight: 500;
 }
 
 .meta-icon {
@@ -914,7 +910,7 @@
 .stat-val {
   font-family: var(--font-primary);
   font-size: 1.28rem;
-  font-weight: 800;
+  font-weight: 750;
   color: var(--sl-ink);
   line-height: 1.1;
   margin-bottom: 2px;
@@ -960,9 +956,13 @@
   }
 
   .hero-brand-mark {
-    width: 42px;
-    height: 42px;
-    border-radius: 13px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  .hero-brand-img {
+    border-radius: 12px;
   }
 
   .focus-tiles-grid {
