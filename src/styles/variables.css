@@ -5,27 +5,51 @@
 
 :root {
   /* Core StudyLunch Branding (Tuned to Official Logo & Icon) */
-  --sl-primary: #0f5753;
-  --sl-primary-dark: #063f3c;
-  --sl-primary-soft: #dff3ef;
+  --sl-bg: #F6EBDD;
+  --sl-bg-soft: #FFF6E8;
+  --sl-surface: #FFFDF7;
+  --sl-surface-raised: #FFFFFF;
 
-  --sl-gold: #f2aa1f;
-  --sl-gold-soft: #fff1c9;
+  --sl-primary: #0D5A55;
+  --sl-primary-dark: #063E3A;
+  --sl-primary-deep: #052F2D;
+  --sl-primary-soft: #CDEDE6;
 
-  --sl-tagline: #009b55;
+  --sl-gold: #F3AA1D;
+  --sl-gold-dark: #B87506;
+  --sl-gold-soft: #FFE8A8;
 
-  --sl-bg: #f8f3ea;
-  --sl-bg-soft: #fffaf1;
-  --sl-surface: #ffffff;
-  --sl-surface-warm: #fff8ec;
+  --sl-green: #039B58;
+  --sl-green-soft: #CFF4E0;
 
-  --sl-ink: #142536;
-  --sl-text: #24323f;
-  --sl-muted: #6d7a80;
+  --sl-mint: #9FEBCB;
+  --sl-mint-soft: #DDF9EC;
 
-  --sl-border: #eadfcf;
-  --sl-shadow: 0 18px 45px rgba(15, 87, 83, 0.12);
-  --sl-shadow-soft: 0 10px 28px rgba(20, 37, 54, 0.08);
+  --sl-sky: #9BDDFC;
+  --sl-sky-soft: #DDF4FF;
+
+  --sl-lavender: #C8C0FF;
+  --sl-lavender-soft: #E9E5FF;
+
+  --sl-peach: #FFB18E;
+  --sl-peach-soft: #FFE3D6;
+
+  --sl-yellow: #FFD66B;
+  --sl-yellow-soft: #FFF0BC;
+
+  --sl-coral: #FF7E68;
+  --sl-coral-soft: #FFDCD4;
+
+  --sl-ink: #102838;
+  --sl-text: #243640;
+  --sl-muted: #66777F;
+
+  --sl-border: #E2CFB8;
+
+  --sl-shadow-soft: 0 12px 26px rgba(16, 40, 56, 0.10);
+  --sl-shadow-3d: 0 10px 0 rgba(6, 62, 58, 0.12), 0 18px 34px rgba(16, 40, 56, 0.14);
+  --sl-shadow-press: 0 4px 0 rgba(6, 62, 58, 0.14), 0 8px 18px rgba(16, 40, 56, 0.10);
+  --sl-inset-highlight: inset 0 1.5px 0 rgba(255, 255, 255, 0.9);
 
   --sl-radius-lg: 28px;
   --sl-radius-md: 20px;
@@ -35,7 +59,7 @@
   --bg-main: var(--sl-bg);
   --bg-soft: var(--sl-bg-soft);
   --surface: var(--sl-surface);
-  --surface-tint: var(--sl-surface-warm);
+  --surface-tint: var(--sl-bg-soft);
   --surface-cool: #eef4f6;
 
   --primary: var(--sl-primary);
@@ -50,11 +74,21 @@
   --apricot: var(--sl-gold);
   --apricot-soft: var(--sl-gold-soft);
 
-  --mint: #bfe8d4;
-  --mint-soft: #e4f7ee;
+  --mint: var(--sl-mint);
+  --mint-soft: var(--sl-mint-soft);
+  --sky: var(--sl-sky);
+  --sky-soft: var(--sl-sky-soft);
+  --lavender: var(--sl-lavender);
+  --lavender-soft: var(--sl-lavender-soft);
+  --peach: var(--sl-peach);
+  --peach-soft: var(--sl-peach-soft);
+  --yellow: var(--sl-yellow);
+  --yellow-soft: var(--sl-yellow-soft);
+  --coral: var(--sl-coral);
+  --coral-soft: var(--sl-coral-soft);
 
-  --lilac: #d8d2ff;
-  --lilac-soft: #f0edff;
+  --lilac: var(--sl-lavender);
+  --lilac-soft: var(--sl-lavender-soft);
 
   --text-main: var(--sl-text);
   --text-soft: var(--sl-muted);
@@ -90,37 +124,36 @@
   --radius-xl: 32px;
   --radius-full: 9999px;
 
-  /* Font Families */
-  --font-primary: 'Poppins', Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-secondary: 'Nunito', Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* Font Families - Clean, human-made, natural app stack */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-secondary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
   /* Motion Tokens */
   --transition-fast: 150ms;
-  --transition-base: 250ms;
-  --ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1.05);
+  --transition-base: 220ms;
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Future-ready Dark Theme Base (Aurora Borealis / Starry Night) */
 [data-theme="dark"] {
-  --sl-bg: #071417;
-  --sl-bg-soft: #0b1f24;
-  --sl-surface: rgba(12, 31, 36, 0.92);
-  --sl-surface-warm: rgba(18, 40, 42, 0.92);
+  --sl-bg: #061315;
+  --sl-bg-soft: #0A1D22;
+  --sl-surface: #0E2529;
+  --sl-surface-raised: #123238;
 
-  --sl-primary: #4fd1c5;
-  --sl-primary-dark: #1b8f86;
-  --sl-primary-soft: rgba(79, 209, 197, 0.14);
+  --sl-primary: #54D2C5;
+  --sl-primary-dark: #1C8E86;
+  --sl-primary-soft: rgba(84, 210, 197, 0.14);
 
-  --sl-gold: #f6b83f;
+  --sl-gold: #F6B83F;
   --sl-gold-soft: rgba(246, 184, 63, 0.16);
 
-  --sl-tagline: #31d07d;
+  --sl-green: #32D47E;
+  --sl-ink: #F0FFFC;
+  --sl-text: #E8F6F4;
+  --sl-muted: #A8C4C1;
 
-  --sl-ink: #edfdfb;
-  --sl-text: #eaf7f5;
-  --sl-muted: #a7c2c0;
-
-  --sl-border: rgba(180, 230, 220, 0.18);
+  --sl-border: rgba(186, 231, 224, 0.18);
   --sl-shadow: 0 22px 55px rgba(0, 0, 0, 0.38);
   --sl-shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.28);
 
@@ -146,10 +179,16 @@ body {
   letter-spacing: -0.01em;
 }
 
-.body, .caption {
+.body {
+  font-family: var(--font-secondary);
+  color: var(--sl-text);
+  font-weight: 400;
+}
+
+.caption {
   font-family: var(--font-secondary);
   color: var(--sl-muted);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* React-hot-toast global override */

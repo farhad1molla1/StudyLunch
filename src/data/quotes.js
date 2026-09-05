@@ -92,6 +92,9 @@ export const studyQuotes = [
 ];
 
 export const getRandomQuote = () => {
+  if (!studyQuotes || studyQuotes.length === 0) {
+    return { text: "A small explanation can become someone’s turning point.", author: "StudyLunch", category: "helping" };
+  }
   const randomIndex = Math.floor(Math.random() * studyQuotes.length);
-  return studyQuotes[randomIndex];
+  return studyQuotes[randomIndex] || studyQuotes[0];
 };
