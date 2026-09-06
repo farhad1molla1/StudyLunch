@@ -289,9 +289,11 @@ const Dashboard = () => {
           <h2 className="overview-title">Thought for today</h2>
           <div className="quote-content">
             <p className="quote-text">
-              {dailyQuote.text || "A small explanation can become someone's turning point."}
+              “{dailyQuote.text ? dailyQuote.text.trim().replace(/^[“"']+|[”"']+$/g, '') : "A small explanation can become someone’s turning point."}”
             </p>
-            <span className="quote-attribution">— {dailyQuote.author || "StudyLunch"}</span>
+            <span className="quote-attribution">
+              — {(dailyQuote.author || "StudyLunch").replace(/^[—–-]\s*/, '')}
+            </span>
           </div>
         </div>
       </section>

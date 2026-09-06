@@ -143,71 +143,71 @@
   user-select: none;
 }
 
-/* Tile 1: Scheduled (Electric Sky / Cyan) */
+/* Tile 1: Scheduled (Soft Sky / Cyan Gradient) */
 .focus-tile-sky {
-  background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
-  border: 1.5px solid #BAE6FD;
+  background: linear-gradient(145deg, #F6FBFF 0%, #DEF2FE 100%);
+  border: 1.5px solid #CBE8FC;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 3px 8px rgba(2, 132, 199, 0.08),
-              0 1.5px 0 #93C5FD;
+              0 3px 8px rgba(2, 132, 199, 0.06),
+              0 1.5px 0 #BAE0F9;
 }
 .focus-tile-sky:hover {
   transform: translateY(-2px);
-  border-color: #7DD3FC;
+  border-color: #9BD2F8;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 6px 14px rgba(2, 132, 199, 0.16),
-              0 2px 0 #60A5FA;
+              0 5px 12px rgba(2, 132, 199, 0.12),
+              0 2px 0 #90CBF7;
 }
 .focus-tile-sky:active {
-  transform: translateY(2px);
-  box-shadow: inset 0 1.5px 3px rgba(2, 132, 199, 0.16),
-              0 1px 0 #93C5FD;
+  transform: translateY(1.5px);
+  box-shadow: inset 0 1px 2px rgba(2, 132, 199, 0.12),
+              0 1px 0 #BAE0F9;
 }
 .focus-tile-sky .focus-num { color: #0369A1; }
 
-/* Tile 2: Waiting (Warm Tech Amber) */
+/* Tile 2: Waiting (Soft Amber / Cream Gradient) */
 .focus-tile-yellow {
-  background: linear-gradient(135deg, #FFFDF5 0%, #FEF3C7 100%);
-  border: 1.5px solid #FDE68A;
+  background: linear-gradient(145deg, #FFFDF7 0%, #FFEFC6 100%);
+  border: 1.5px solid #FDE4B8;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 3px 8px rgba(217, 119, 6, 0.08),
-              0 1.5px 0 #FCD34D;
+              0 3px 8px rgba(217, 119, 6, 0.06),
+              0 1.5px 0 #F8D599;
 }
 .focus-tile-yellow:hover {
   transform: translateY(-2px);
-  border-color: #FBBF24;
+  border-color: #F8CB7C;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 6px 14px rgba(217, 119, 6, 0.16),
-              0 2px 0 #F59E0B;
+              0 5px 12px rgba(217, 119, 6, 0.12),
+              0 2px 0 #F3BF65;
 }
 .focus-tile-yellow:active {
-  transform: translateY(2px);
-  box-shadow: inset 0 1.5px 3px rgba(217, 119, 6, 0.16),
-              0 1px 0 #FCD34D;
+  transform: translateY(1.5px);
+  box-shadow: inset 0 1px 2px rgba(217, 119, 6, 0.12),
+              0 1px 0 #F8D599;
 }
 .focus-tile-yellow .focus-num { color: #B45309; }
 
-/* Tile 3: Updates (Digital Mint / Teal) */
+/* Tile 3: Updates (Soft Mint / Teal Gradient) */
 .focus-tile-mint {
-  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-  border: 1.5px solid #BBF7D0;
+  background: linear-gradient(145deg, #F7FFFD 0%, #DCF7EE 100%);
+  border: 1.5px solid #B8F0DE;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 3px 8px rgba(5, 150, 105, 0.08),
-              0 1.5px 0 #86EFAC;
+              0 3px 8px rgba(11, 90, 85, 0.06),
+              0 1.5px 0 #A1E5CF;
 }
 .focus-tile-mint:hover {
   transform: translateY(-2px);
-  border-color: #4ADE80;
+  border-color: #7FE0C2;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 6px 14px rgba(5, 150, 105, 0.16),
-              0 2px 0 #34D399;
+              0 5px 12px rgba(11, 90, 85, 0.12),
+              0 2px 0 #6CD6B5;
 }
 .focus-tile-mint:active {
-  transform: translateY(2px);
-  box-shadow: inset 0 1.5px 3px rgba(5, 150, 105, 0.16),
-              0 1px 0 #86EFAC;
+  transform: translateY(1.5px);
+  box-shadow: inset 0 1px 2px rgba(11, 90, 85, 0.12),
+              0 1px 0 #A1E5CF;
 }
-.focus-tile-mint .focus-num { color: #047857; }
+.focus-tile-mint .focus-num { color: #0B6B63; }
 
 .focus-badge {
   width: 34px;
@@ -220,22 +220,28 @@
   background: #FFFFFF;
   flex-shrink: 0;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95),
-              0 1.5px 3px rgba(15, 32, 39, 0.06);
+              0 1.5px 3px rgba(15, 32, 39, 0.05);
 }
 
 .badge-sky {
   color: #0284C7;
-  border: 1px solid #BAE6FD;
+  border: 1px solid #CBE8FC;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+              0 1.5px 3px rgba(2, 132, 199, 0.08);
 }
 
 .badge-yellow {
   color: #D97706;
-  border: 1px solid #FDE68A;
+  border: 1px solid #FDE4B8;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+              0 1.5px 3px rgba(217, 119, 6, 0.08);
 }
 
 .badge-mint {
-  color: #059669;
-  border: 1px solid #BBF7D0;
+  color: #0D9488;
+  border: 1px solid #B8F0DE;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+              0 1.5px 3px rgba(13, 148, 136, 0.08);
 }
 
 .focus-info {
@@ -259,7 +265,7 @@
   white-space: nowrap;
 }
 
-/* Thought for today: Clean, Natural, Student-Friendly (Consistent with StudyLunch typography) */
+/* Thought for today: Elegant, Human-Made Student-Friendly Typography */
 .quote-card-tactile {
   background: linear-gradient(180deg, #FFFFFF 0%, #F9FBFC 100%);
   border: 1.5px solid var(--sl-border);
@@ -281,23 +287,24 @@
 }
 
 .quote-text {
-  font-family: inherit;
-  font-size: 15.5px;
-  font-style: normal;
-  line-height: 1.6;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.96rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.65;
   color: var(--sl-ink);
   margin: 0;
-  font-weight: 500;
   letter-spacing: -0.005em;
 }
 
 .quote-attribution {
-  font-family: inherit;
-  font-size: 13.5px;
+  font-family: var(--font-secondary, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 0.8rem;
   color: var(--sl-primary);
   font-weight: 600;
   align-self: flex-end;
   letter-spacing: 0.01em;
+  opacity: 0.88;
 }
 
 /* Badge Color Themes (Clean Tech Accents) */

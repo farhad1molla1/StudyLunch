@@ -79,7 +79,7 @@ export const studyQuotes = [
   { text: "Teachers open the door, but you must enter by yourself.", author: "Chinese Proverb", category: "teaching" },
   { text: "You cannot open a book without learning something.", author: "Confucius", category: "learning" },
   { text: "Never let the fear of striking out keep you from playing the game.", author: "Babe Ruth", category: "growth" },
-  { text: "The mind is just like a muscle - the more you exercise it, the stronger it gets.", author: "Idowu Koyenikan", category: "learning" },
+  { text: "The mind is just like a muscle—the more you exercise it, the stronger it gets.", author: "Idowu Koyenikan", category: "learning" },
   { text: "Every day is a new opportunity to change your life.", author: "Anonymous", category: "hope" },
   { text: "Success is falling nine times and getting up ten.", author: "Jon Bon Jovi", category: "resilience" },
   { text: "You don't drown by falling in the water; you drown by staying there.", author: "Ed Cole", category: "resilience" },
