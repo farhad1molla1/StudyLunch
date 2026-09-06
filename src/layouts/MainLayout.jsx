@@ -50,20 +50,49 @@ const MainLayout = ({ children }) => {
   };
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '🏠' },
-    { path: '/topics', label: 'Browse Topics', icon: '📚' },
-    { path: '/topics/create', label: 'Create Topic', icon: '➕' },
-    { path: '/sessions', label: 'My Sessions', icon: '🤝' },
-    { path: '/notifications', label: 'Notifications', icon: '🔔' },
-    { path: '/locker', label: 'Locker', icon: '🎒' },
-    { path: '/study-system', label: 'Study System', icon: '🍱' },
-    { path: '/leaderboard', label: 'Leaderboard', icon: '🏆' },
-    { path: '/profile', label: 'Profile', icon: '👤' },
+    { path: '/dashboard', label: 'Dashboard', shortLabel: 'Home', icon: '🏠' },
+    { path: '/topics', label: 'Browse Topics', shortLabel: 'Browse', icon: '🔍' },
+    { path: '/topics/create', label: 'Create Topic', shortLabel: 'Create', icon: '➕' },
+    { path: '/sessions', label: 'My Sessions', shortLabel: 'Sessions', icon: '🤝' },
+    { path: '/notifications', label: 'Notifications', shortLabel: 'Alerts', icon: '🔔' },
+    { path: '/locker', label: 'Locker', shortLabel: 'Locker', icon: '🎒' },
+    { path: '/study-system', label: 'Study System', shortLabel: 'System', icon: '🍱' },
+    { path: '/leaderboard', label: 'Leaderboard', shortLabel: 'Board', icon: '🏆' },
+    { path: '/profile', label: 'Profile', shortLabel: 'Profile', icon: '👤' },
   ];
 
   const getPageTitle = () => {
-    const currentItem = navItems.find(item => location.pathname.startsWith(item.path) && item.path !== '/');
-    return currentItem ? currentItem.label : 'StudyLunch';
+    const pathname = location.pathname;
+    if (pathname === '/dashboard') return 'Dashboard';
+    if (pathname === '/topics/create') return 'Create Topic';
+    if (pathname === '/topics') return 'Browse Topics';
+    if (pathname.startsWith('/topics/')) return 'Topic Details';
+    if (pathname === '/sessions' || pathname.startsWith('/sessions/')) return 'Sessions';
+    if (pathname.startsWith('/notifications')) return 'Notifications';
+    if (pathname.startsWith('/locker')) return 'Locker';
+    if (pathname.startsWith('/study-system')) return 'Study System';
+    if (pathname.startsWith('/leaderboard')) return 'Leaderboard';
+    if (pathname.startsWith('/profile')) return 'Profile';
+    return 'StudyLunch';
+  };
+
+  const isNavActive = (itemPath) => {
+    const pathname = location.pathname;
+    if (itemPath === '/dashboard') {
+      return pathname === '/dashboard' || pathname === '/';
+    }
+    if (itemPath === '/topics') {
+      // Browse active ONLY on exact /topics. NOT on /topics/create or /topics/:topicId
+      return pathname === '/topics';
+    }
+    if (itemPath === '/topics/create') {
+      // Create active ONLY on /topics/create
+      return pathname === '/topics/create';
+    }
+    if (itemPath === '/sessions') {
+      return pathname === '/sessions' || pathname.startsWith('/sessions/');
+    }
+    return pathname === itemPath;
   };
 
   const photoUrl = activeUser?.photoURL || dbUser?.photoURL;
@@ -121,21 +150,25 @@ const MainLayout = ({ children }) => {
         </Link>
 
         <nav className="sidebar-nav">
-          {navItems.map((item) => (
-            <NavLink 
-              key={item.path} 
-              to={item.path}
-              className={({ isActive }) => `nav-pill-cafe ${isActive ? 'active' : ''}`}
-              onClick={() => setIsMobileMenuOpen(false)}
-              title={isCollapsed && !isMobileMenuOpen ? item.label : ''}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              {(!isCollapsed || isMobileMenuOpen) && <span className="nav-label body">{item.label}</span>}
-              
-              {item.badge && (!isCollapsed || isMobileMenuOpen) && <span className="nav-badge">{item.badge}</span>}
-              {item.badge && isCollapsed && !isMobileMenuOpen && <span className="nav-badge-dot"></span>}
-            </NavLink>
-          ))}
+          {navItems.map((item) => {
+            const active = isNavActive(item.path);
+            return (
+              <NavLink 
+                key={item.path} 
+                to={item.path}
+                end={item.path !== '/sessions'}
+                className={() => `nav-pill-cafe ${active ? 'active' : ''}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                title={isCollapsed && !isMobileMenuOpen ? item.label : ''}
+              >
+                <span className="nav-icon">{item.icon}</span>
+                {(!isCollapsed || isMobileMenuOpen) && <span className="nav-label body">{item.label}</span>}
+                
+                {item.badge && (!isCollapsed || isMobileMenuOpen) && <span className="nav-badge">{item.badge}</span>}
+                {item.badge && isCollapsed && !isMobileMenuOpen && <span className="nav-badge-dot"></span>}
+              </NavLink>
+            );
+          })}
         </nav>
 
         <div className="sidebar-footer">
@@ -233,18 +266,22 @@ const MainLayout = ({ children }) => {
       </div>
 
       {/* ================= MOBILE BOTTOM NAV ================= */}
-      <nav className="mobile-bottom-nav">
-        {navItems.slice(0, 4).map((item) => (
-          <NavLink 
-            key={item.path} 
-            to={item.path}
-            className={({ isActive }) => `mob-nav-item ${isActive ? 'active' : ''}`}
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <span className="mob-nav-icon">{item.icon}</span>
-            <span className="mob-nav-label caption">{item.label}</span>
-          </NavLink>
-        ))}
+      <nav className="mobile-bottom-nav" aria-label="Mobile Navigation">
+        {navItems.slice(0, 4).map((item) => {
+          const active = isNavActive(item.path);
+          return (
+            <NavLink 
+              key={item.path} 
+              to={item.path}
+              end={item.path !== '/sessions'}
+              className={() => `mob-nav-item ${active ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <span className="mob-nav-icon">{item.icon}</span>
+              <span className="mob-nav-label">{item.shortLabel || item.label}</span>
+            </NavLink>
+          );
+        })}
         <button 
           type="button"
           className={`mob-nav-item ${isMobileMenuOpen ? 'active' : ''}`}
@@ -252,7 +289,7 @@ const MainLayout = ({ children }) => {
           aria-label="Toggle navigation menu"
         >
           <span className="mob-nav-icon">☰</span>
-          <span className="mob-nav-label caption">Menu</span>
+          <span className="mob-nav-label">Menu</span>
         </button>
       </nav>
     </div>

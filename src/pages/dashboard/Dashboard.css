@@ -17,17 +17,17 @@
    1. HERO SECTION (Tech-Enabled Branded Digital Wash)
    ========================================= */
 .dashboard-hero-tactile {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F2FAF9 50%, #E6F5F3 100%);
-  border: 1.5px solid rgba(13, 148, 136, 0.2);
+  background: linear-gradient(135deg, #FFFFFF 0%, #F4FAF9 50%, #E8F6F4 100%);
+  border: 1px solid rgba(13, 148, 136, 0.12);
   border-radius: 22px;
   padding: 20px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  box-shadow: var(--sl-inset-highlight),
-              0 6px 20px rgba(11, 90, 85, 0.06),
-              0 1px 2px rgba(15, 32, 39, 0.03);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+              0 8px 24px rgba(11, 90, 85, 0.04),
+              0 1px 3px rgba(15, 32, 39, 0.02);
   position: relative;
   overflow: hidden;
 }
@@ -113,12 +113,12 @@
 
 /* Today's Focus Card (Connected, Clean, Tech-Tinted) */
 .focus-card-tactile {
-  background: linear-gradient(180deg, #FFFFFF 0%, #F9FBFC 100%);
-  border: 1.5px solid var(--sl-border);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAFCFC 100%);
+  border: 1px solid rgba(225, 232, 236, 0.65);
   border-radius: 20px;
   padding: 16px 18px;
-  box-shadow: var(--sl-inset-highlight),
-              var(--sl-shadow-card);
+  box-shadow: inset 0 1.5px 0 #FFFFFF,
+              0 6px 20px rgba(15, 32, 39, 0.035);
   display: flex;
   flex-direction: column;
 }
@@ -146,21 +146,21 @@
 /* Tile 1: Scheduled (Soft Sky / Cyan Gradient) */
 .focus-tile-sky {
   background: linear-gradient(145deg, #F6FBFF 0%, #DEF2FE 100%);
-  border: 1.5px solid #CBE8FC;
+  border: 1px solid rgba(203, 232, 252, 0.75);
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 3px 8px rgba(2, 132, 199, 0.06),
-              0 1.5px 0 #BAE0F9;
+              0 2px 6px rgba(2, 132, 199, 0.05),
+              0 1px 0 rgba(186, 224, 249, 0.6);
 }
 .focus-tile-sky:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1.5px);
   border-color: #9BD2F8;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 5px 12px rgba(2, 132, 199, 0.12),
-              0 2px 0 #90CBF7;
+              0 4px 10px rgba(2, 132, 199, 0.1),
+              0 1.5px 0 #90CBF7;
 }
 .focus-tile-sky:active {
   transform: translateY(1.5px);
-  box-shadow: inset 0 1px 2px rgba(2, 132, 199, 0.12),
+  box-shadow: inset 0 1px 2px rgba(2, 132, 199, 0.1),
               0 1px 0 #BAE0F9;
 }
 .focus-tile-sky .focus-num { color: #0369A1; }
@@ -168,21 +168,21 @@
 /* Tile 2: Waiting (Soft Amber / Cream Gradient) */
 .focus-tile-yellow {
   background: linear-gradient(145deg, #FFFDF7 0%, #FFEFC6 100%);
-  border: 1.5px solid #FDE4B8;
+  border: 1px solid rgba(253, 228, 184, 0.75);
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 3px 8px rgba(217, 119, 6, 0.06),
-              0 1.5px 0 #F8D599;
+              0 2px 6px rgba(217, 119, 6, 0.05),
+              0 1px 0 rgba(248, 213, 153, 0.6);
 }
 .focus-tile-yellow:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1.5px);
   border-color: #F8CB7C;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 5px 12px rgba(217, 119, 6, 0.12),
-              0 2px 0 #F3BF65;
+              0 4px 10px rgba(217, 119, 6, 0.1),
+              0 1.5px 0 #F3BF65;
 }
 .focus-tile-yellow:active {
   transform: translateY(1.5px);
-  box-shadow: inset 0 1px 2px rgba(217, 119, 6, 0.12),
+  box-shadow: inset 0 1px 2px rgba(217, 119, 6, 0.1),
               0 1px 0 #F8D599;
 }
 .focus-tile-yellow .focus-num { color: #B45309; }
@@ -190,21 +190,21 @@
 /* Tile 3: Updates (Soft Mint / Teal Gradient) */
 .focus-tile-mint {
   background: linear-gradient(145deg, #F7FFFD 0%, #DCF7EE 100%);
-  border: 1.5px solid #B8F0DE;
+  border: 1px solid rgba(184, 240, 222, 0.75);
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 3px 8px rgba(11, 90, 85, 0.06),
-              0 1.5px 0 #A1E5CF;
+              0 2px 6px rgba(11, 90, 85, 0.05),
+              0 1px 0 rgba(161, 229, 207, 0.6);
 }
 .focus-tile-mint:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1.5px);
   border-color: #7FE0C2;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 5px 12px rgba(11, 90, 85, 0.12),
-              0 2px 0 #6CD6B5;
+              0 4px 10px rgba(11, 90, 85, 0.1),
+              0 1.5px 0 #6CD6B5;
 }
 .focus-tile-mint:active {
   transform: translateY(1.5px);
-  box-shadow: inset 0 1px 2px rgba(11, 90, 85, 0.12),
+  box-shadow: inset 0 1px 2px rgba(11, 90, 85, 0.1),
               0 1px 0 #A1E5CF;
 }
 .focus-tile-mint .focus-num { color: #0B6B63; }
@@ -267,44 +267,49 @@
 
 /* Thought for today: Elegant, Human-Made Student-Friendly Typography */
 .quote-card-tactile {
-  background: linear-gradient(180deg, #FFFFFF 0%, #F9FBFC 100%);
-  border: 1.5px solid var(--sl-border);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAFCFC 100%);
+  border: 1px solid rgba(225, 232, 236, 0.65);
   border-radius: 20px;
   padding: 16px 18px;
-  box-shadow: var(--sl-inset-highlight),
-              var(--sl-shadow-card);
+  box-shadow: inset 0 1.5px 0 #FFFFFF,
+              0 6px 20px rgba(15, 32, 39, 0.035);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
+.quote-card-tactile .overview-title {
+  color: #0F6B62; /* deep teal subtle brand color */
+  margin: 0 0 8px 0;
+}
+
 .quote-content {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
   flex: 1;
 }
 
 .quote-text {
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 0.96rem;
+  font-size: 0.94rem;
   font-style: italic;
   font-weight: 500;
-  line-height: 1.65;
-  color: var(--sl-ink);
+  line-height: 1.55;
+  color: #1E3340;
   margin: 0;
   letter-spacing: -0.005em;
 }
 
 .quote-attribution {
   font-family: var(--font-secondary, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
-  font-size: 0.8rem;
-  color: var(--sl-primary);
+  font-size: 0.76rem;
+  color: #5A747D; /* muted teal/gray, subtle, no purple */
   font-weight: 600;
   align-self: flex-end;
   letter-spacing: 0.01em;
-  opacity: 0.88;
+  opacity: 0.9;
 }
 
 /* Badge Color Themes (Clean Tech Accents) */
@@ -392,60 +397,58 @@
 
 /* Tile 1: Create Request (Controlled Indigo Aura) */
 .action-tile-peach {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F6F8FE 50%, #EEF2FD 100%);
-  border: 1.5px solid #D5DCF8;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F7F9FE 50%, #EFF3FD 100%);
+  border: 1px solid rgba(213, 220, 248, 0.65);
   box-shadow: inset 0 1.5px 0 #FFFFFF,
-              0 4px 14px rgba(59, 73, 223, 0.07),
-              0 2px 0 rgba(59, 73, 223, 0.12);
+              0 6px 18px rgba(59, 73, 223, 0.045),
+              0 1px 0 rgba(59, 73, 223, 0.08);
 }
 .action-tile-peach:hover {
   transform: translateY(-2px);
-  border-color: #BAC7F8;
+  border-color: rgba(186, 199, 248, 0.85);
   box-shadow: inset 0 1.5px 0 #FFFFFF,
-              0 8px 20px rgba(59, 73, 223, 0.12),
-              0 3px 0 rgba(59, 73, 223, 0.18);
+              0 8px 20px rgba(59, 73, 223, 0.1),
+              0 2px 0 rgba(59, 73, 223, 0.12);
 }
 .action-tile-peach:active {
   transform: translateY(2px);
-  box-shadow: inset 0 2px 4px rgba(59, 73, 223, 0.14),
-              0 1px 0 rgba(59, 73, 223, 0.08);
+  box-shadow: inset 0 2px 4px rgba(59, 73, 223, 0.1),
+              0 1px 0 rgba(59, 73, 223, 0.06);
 }
 
 /* Tile 2: Browse Topics (Digital Teal / Mint Aura) */
 .action-tile-mint {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F1FBF8 50%, #E6F8F3 100%);
-  border: 1.5px solid #B8ECE0;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F3FBF9 50%, #E9F8F4 100%);
+  border: 1px solid rgba(184, 236, 224, 0.65);
   box-shadow: inset 0 1.5px 0 #FFFFFF,
-              0 4px 14px rgba(11, 90, 85, 0.08),
-              0 2px 0 rgba(11, 90, 85, 0.16);
+              0 6px 18px rgba(11, 90, 85, 0.045),
+              0 1px 0 rgba(11, 90, 85, 0.09);
 }
 .action-tile-mint:hover {
   transform: translateY(-2px);
-  border-color: #5EEAD4;
+  border-color: rgba(94, 234, 212, 0.85);
   box-shadow: inset 0 1.5px 0 #FFFFFF,
-              0 8px 20px rgba(11, 90, 85, 0.14),
-              0 3px 0 rgba(11, 90, 85, 0.22);
+              0 8px 20px rgba(11, 90, 85, 0.1),
+              0 2px 0 rgba(11, 90, 85, 0.14);
 }
 .action-tile-mint:active {
   transform: translateY(2px);
-  box-shadow: inset 0 2px 4px rgba(11, 90, 85, 0.15),
-              0 1px 0 rgba(11, 90, 85, 0.1);
+  box-shadow: inset 0 2px 4px rgba(11, 90, 85, 0.12),
+              0 1px 0 rgba(11, 90, 85, 0.06);
 }
 
 /* Tile 3: Verified Help (Soft Violet / Planned State) */
 .action-tile-lavender {
   background: linear-gradient(135deg, #FFFFFF 0%, #FAF8FD 50%, #F4F1FA 100%);
-  border: 1.5px solid #E3DFEE;
+  border: 1px solid rgba(227, 223, 238, 0.6);
   box-shadow: inset 0 1.5px 0 #FFFFFF,
-              0 4px 12px rgba(99, 102, 241, 0.05),
-              0 1.5px 0 rgba(99, 102, 241, 0.08);
+              0 4px 14px rgba(99, 102, 241, 0.035);
   cursor: default;
 }
 .action-tile-lavender:hover {
-  border-color: #DDD6FE;
+  border-color: rgba(221, 214, 254, 0.8);
   box-shadow: inset 0 1.5px 0 #FFFFFF,
-              0 6px 16px rgba(99, 102, 241, 0.08),
-              0 2px 0 rgba(99, 102, 241, 0.12);
+              0 6px 16px rgba(99, 102, 241, 0.06);
 }
 .action-tile-lavender:active {
   transform: none;
@@ -530,21 +533,21 @@
 }
 
 .dashboard-card-tactile {
-  background: linear-gradient(180deg, #FFFFFF 0%, #F9FBFC 100%);
-  border: 1.5px solid var(--sl-border);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAFCFC 100%);
+  border: 1px solid rgba(225, 232, 236, 0.65);
   border-radius: 20px;
   padding: 18px 20px;
-  box-shadow: var(--sl-inset-highlight),
-              var(--sl-shadow-card);
+  box-shadow: inset 0 1.5px 0 #FFFFFF,
+              0 6px 20px rgba(15, 32, 39, 0.035);
   height: 100%;
 }
 
 /* Upcoming Session Card: Light Digital Teal Tint */
 .bento-main .dashboard-card-tactile {
   background: linear-gradient(180deg, #FFFFFF 0%, #F7FBFA 100%);
-  border: 1.5px solid rgba(11, 90, 85, 0.16);
-  box-shadow: var(--sl-inset-highlight),
-              0 4px 16px rgba(11, 90, 85, 0.05);
+  border: 1px solid rgba(11, 90, 85, 0.09);
+  box-shadow: inset 0 1.5px 0 #FFFFFF,
+              0 6px 20px rgba(11, 90, 85, 0.035);
 }
 
 .card-header-flex {
@@ -604,10 +607,11 @@
   justify-content: center;
   padding: 22px 16px;
   text-align: center;
-  background: #FFFFFF;
-  border: 2px dashed #99F6E4;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FCFB 100%);
+  border: 1.5px dashed rgba(13, 148, 136, 0.22);
   border-radius: 16px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95),
+              0 2px 8px rgba(11, 90, 85, 0.03);
 }
 
 .mascot-wrap {
@@ -843,61 +847,61 @@
 
 /* Stat 1: Asked (Electric Blue) */
 .stat-tile-lavender {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F5F6FF 100%);
-  border: 1.5px solid #E0E3FF;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F6F7FF 100%);
+  border: 1px solid rgba(224, 227, 255, 0.7);
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 2.5px 8px rgba(79, 70, 229, 0.06),
-              0 1px 0 #D5D8FC;
+              0 2px 6px rgba(79, 70, 229, 0.04),
+              0 1px 0 rgba(213, 216, 252, 0.45);
 }
 .stat-tile-lavender:hover {
   border-color: #C7D2FE;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 4.5px 12px rgba(79, 70, 229, 0.12),
+              0 4px 10px rgba(79, 70, 229, 0.08),
               0 1.5px 0 #A5B4FC;
 }
 
 /* Stat 2: Helped (Digital Mint) */
 .stat-tile-mint {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 100%);
-  border: 1.5px solid #DCFCE7;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F1FDF5 100%);
+  border: 1px solid rgba(220, 252, 231, 0.7);
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 2.5px 8px rgba(5, 150, 105, 0.06),
-              0 1px 0 #BBF7D0;
+              0 2px 6px rgba(5, 150, 105, 0.04),
+              0 1px 0 rgba(187, 247, 208, 0.45);
 }
 .stat-tile-mint:hover {
   border-color: #BBF7D0;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 4.5px 12px rgba(5, 150, 105, 0.12),
+              0 4px 10px rgba(5, 150, 105, 0.08),
               0 1.5px 0 #86EFAC;
 }
 
 /* Stat 3: Completed (Deep Teal) */
 .stat-tile-teal {
-  background: linear-gradient(135deg, #FFFFFF 0%, #F0FDFA 100%);
-  border: 1.5px solid #CCFBF1;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F1FDFB 100%);
+  border: 1px solid rgba(204, 251, 241, 0.7);
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 2.5px 8px rgba(13, 148, 136, 0.06),
-              0 1px 0 #99F6E4;
+              0 2px 6px rgba(13, 148, 136, 0.04),
+              0 1px 0 rgba(153, 246, 228, 0.45);
 }
 .stat-tile-teal:hover {
   border-color: #99F6E4;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 4.5px 12px rgba(13, 148, 136, 0.12),
+              0 4px 10px rgba(13, 148, 136, 0.08),
               0 1.5px 0 #5EEAD4;
 }
 
 /* Stat 4: Trust (Warm Gold) */
 .stat-tile-yellow {
-  background: linear-gradient(135deg, #FFFFFF 0%, #FFFBEB 100%);
-  border: 1.5px solid #FEF3C7;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FFFDF0 100%);
+  border: 1px solid rgba(254, 243, 199, 0.7);
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 2.5px 8px rgba(217, 119, 6, 0.06),
-              0 1px 0 #FDE68A;
+              0 2px 6px rgba(217, 119, 6, 0.04),
+              0 1px 0 rgba(253, 230, 138, 0.45);
 }
 .stat-tile-yellow:hover {
   border-color: #FDE68A;
   box-shadow: inset 0 1px 0 #FFFFFF,
-              0 4.5px 12px rgba(217, 119, 6, 0.12),
+              0 4px 10px rgba(217, 119, 6, 0.08),
               0 1.5px 0 #FCD34D;
 }
 
@@ -931,7 +935,7 @@
 }
 
 /* =========================================
-   6. RESPONSIVE DESIGN (Mobile-First: 360px - 430px)
+   6. RESPONSIVE DESIGN (Mobile-First: 360px - 768px)
    ========================================= */
 @media (max-width: 1024px) {
   .quick-actions-tiles {
@@ -945,176 +949,324 @@
 
 @media (max-width: 768px) {
   .dashboard-container {
-    gap: 14px;
-    padding-bottom: 20px;
+    gap: 10px;
+    padding-bottom: 6px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .dashboard-hero-tactile {
-    padding: 16px 18px;
-    border-radius: 18px;
-  }
-
-  .hero-title {
-    font-size: 1.35rem;
-  }
-
-  .hero-subtitle {
-    font-size: 0.86rem;
-  }
-
-  .hero-brand-mark {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-  }
-
-  .hero-brand-img {
-    border-radius: 12px;
-  }
-
-  .focus-tiles-grid {
-    grid-template-columns: repeat(3, 1fr);
+  .dash-overview-grid {
+    grid-template-columns: 1fr;
     gap: 8px;
   }
 
-  .focus-tile {
-    padding: 8px 9px;
-    gap: 7px;
-  }
-
-  .focus-badge {
-    width: 30px;
-    height: 30px;
-    font-size: 14px;
-    border-radius: 9px;
-  }
-
-  .focus-num {
-    font-size: 1.05rem;
-  }
-
-  .focus-lbl {
-    font-size: 0.68rem;
-  }
-
-  /* 2-column mobile layout: 2 active tiles side-by-side, 1 planned tile spanning */
-  .quick-actions-tiles {
-    grid-template-columns: repeat(2, 1fr);
+  /* Compact Hero Header */
+  .dashboard-hero-tactile {
+    padding: 11px 13px;
+    border-radius: 15px;
     gap: 10px;
   }
 
+  .hero-title {
+    font-size: 1.25rem; /* ~20px - 22px */
+    line-height: 1.2;
+  }
+
+  .hero-subtitle {
+    font-size: 0.8rem; /* ~12px - 13px */
+    line-height: 1.35;
+  }
+
+  .hero-brand-mark {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+  }
+
+  .hero-brand-img {
+    border-radius: 11px;
+  }
+
+  /* Today's Focus: Compact 3-in-a-row horizontal stat strip (no excessive stacking) */
+  .focus-card-tactile {
+    padding: 11px 11px;
+    border-radius: 15px;
+  }
+
+  .overview-title {
+    font-size: 0.92rem; /* 15px - 16px */
+    margin: 0 0 7px 0;
+  }
+
+  .focus-tiles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .focus-tile {
+    min-height: 48px;
+    padding: 6px 5px;
+    border-radius: 11px;
+    gap: 5px;
+  }
+
+  .focus-badge {
+    width: 27px;
+    height: 27px;
+    min-width: 27px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .focus-num {
+    font-size: 1.1rem;
+    line-height: 1.05;
+  }
+
+  .focus-lbl {
+    font-size: 0.65rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Thought for today: Compact, clean card */
+  .quote-card-tactile {
+    padding: 10px 12px;
+    border-radius: 14px;
+  }
+
+  .quote-card-tactile .overview-title {
+    font-size: 0.84rem;
+    color: #0F6B62;
+    margin: 0 0 4px 0;
+  }
+
+  .quote-content {
+    gap: 4px;
+  }
+
+  .quote-text {
+    font-size: 0.82rem;
+    line-height: 1.4;
+    color: #1E3340;
+  }
+
+  .quote-attribution {
+    font-size: 0.7rem;
+    color: #5A747D;
+    margin-top: 0;
+  }
+
+  .section-heading {
+    font-size: 0.94rem; /* 15px - 16px */
+  }
+
+  /* Quick Actions: Compact 2-column app tiles */
+  .quick-actions-section {
+    gap: 6px;
+  }
+
+  .quick-actions-tiles {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 7px;
+  }
+
   .action-tile {
-    min-height: 114px;
-    padding: 14px 14px;
-    border-radius: 16px;
+    min-height: 92px;
+    padding: 10px 12px;
+    border-radius: 14px;
+  }
+
+  .tile-top {
+    margin-bottom: 6px;
+  }
+
+  .tile-icon-badge {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+    border-radius: 9px;
+  }
+
+  .tile-mini-tag {
+    font-size: 0.64rem;
+    padding: 2px 6px;
+  }
+
+  .tile-title {
+    font-size: 0.86rem;
+  }
+
+  .tile-sub {
+    font-size: 0.68rem;
   }
 
   .action-tile-planned {
     grid-column: span 2;
-    min-height: 80px;
+    min-height: 54px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
   }
 
-  .tile-icon-badge {
-    width: 36px;
-    height: 36px;
-    font-size: 17px;
+  .action-tile-planned .tile-top {
+    margin-bottom: 0;
+    gap: 8px;
+    align-items: center;
   }
 
-  .tile-title {
-    font-size: 0.92rem;
-  }
-
-  .tile-sub {
-    font-size: 0.72rem;
+  .action-tile-planned .tile-body {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
   }
 
   .dash-bento-grid {
     grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .dashboard-card-tactile {
-    padding: 16px 16px;
-    border-radius: 18px;
-  }
-}
-
-/* Small Screen Smartphones (360px - 430px) */
-@media (max-width: 430px) {
-  .dashboard-container {
-    gap: 12px;
-  }
-
-  .dashboard-hero-tactile {
-    padding: 14px 14px;
-    border-radius: 16px;
-  }
-
-  .hero-title {
-    font-size: 1.22rem;
-  }
-
-  .focus-card-tactile, 
-  .quote-card-tactile {
-    padding: 14px 14px;
-    border-radius: 16px;
-  }
-
-  .focus-tiles-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .focus-tile {
-    padding: 9px 12px;
     gap: 10px;
   }
 
-  /* 2-column mobile app tiles */
-  .quick-actions-tiles {
-    grid-template-columns: repeat(2, 1fr);
+  .dashboard-card-tactile {
+    padding: 13px 13px;
+    border-radius: 16px;
+  }
+
+  /* Upcoming Session Compact */
+  .mascot-cat-svg {
+    width: 68px;
+    height: 58px;
+  }
+
+  .mascot-wrap {
+    margin-bottom: 3px;
+  }
+
+  .schedule-empty-state-tactile {
+    padding: 11px 10px;
+    border-radius: 13px;
+  }
+
+  .empty-state-title {
+    font-size: 0.88rem;
+    margin: 0 0 2px 0;
+  }
+
+  .empty-state-message {
+    font-size: 0.74rem;
+    margin: 0 0 8px 0;
+    max-width: 240px;
+    line-height: 1.35;
+  }
+
+  .empty-action-group {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .empty-action-group .btn-tactile-primary,
+  .empty-action-group .btn-tactile-secondary {
+    flex: 1;
+    min-height: 42px;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+
+  .session-item-tactile {
+    padding: 9px 10px;
     gap: 8px;
+    border-radius: 13px;
   }
 
-  .action-tile {
-    min-height: 106px;
-    padding: 12px 10px;
-    border-radius: 15px;
+  .session-date-tile {
+    min-width: 40px;
+    padding: 4px 6px;
+    border-radius: 10px;
   }
 
-  .action-tile-planned {
-    grid-column: span 2;
-    min-height: 76px;
+  .session-day {
+    font-size: 1.1rem;
   }
 
-  .tile-title {
-    font-size: 0.86rem;
+  .session-month {
+    font-size: 0.62rem;
   }
 
-  .tile-sub {
-    font-size: 0.68rem;
+  .session-title {
+    font-size: 0.88rem;
+    margin: 0 0 1px 0;
   }
 
-  .tile-mini-tag {
-    font-size: 0.68rem;
-    padding: 2px 7px;
+  .session-meta {
+    font-size: 0.74rem;
   }
 
-  .btn-tactile-primary, 
-  .btn-tactile-secondary {
-    min-height: 44px; /* Touch target standard */
+  .btn-room {
+    min-height: 42px;
+    padding: 6px 12px;
+    font-size: 0.78rem;
   }
 
+  /* Compact Learning Stats (2-column, low vertical footprint) */
   .stats-grid-tactile {
-    gap: 8px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
   }
 
   .stat-tile-3d {
-    padding: 11px 6px;
-    border-radius: 14px;
+    min-height: 58px;
+    padding: 7px 4px;
+    border-radius: 12px;
+  }
+
+  .stat-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    border-radius: 7px;
+    margin-bottom: 2px;
   }
 
   .stat-val {
-    font-size: 1.18rem;
+    font-size: 1.05rem;
+    margin-bottom: 1px;
+  }
+
+  .stat-lbl {
+    font-size: 0.66rem;
+  }
+}
+
+/* Extra Compact Screens (<= 360px) */
+@media (max-width: 360px) {
+  .hero-title {
+    font-size: 1.2rem;
+  }
+
+  .focus-tile {
+    padding: 6px 4px;
+    gap: 4px;
+  }
+
+  .focus-badge {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    font-size: 11px;
+  }
+
+  .focus-num {
+    font-size: 1rem;
+  }
+
+  .focus-lbl {
+    font-size: 0.6rem;
+  }
+
+  .empty-action-group {
+    flex-direction: column;
   }
 }
